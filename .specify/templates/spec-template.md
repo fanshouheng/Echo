@@ -1,115 +1,346 @@
-# Feature Specification: [FEATURE NAME]
+# Technical Specification: [FEATURE_NAME]
 
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
-**Input**: User description: "$ARGUMENTS"
-
-## User Scenarios & Testing *(mandatory)*
-
-<!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
--->
-
-### User Story 1 - [Brief Title] (Priority: P1)
-
-[Describe this user journey in plain language]
-
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-2. **Given** [initial state], **When** [action], **Then** [expected outcome]
+**Version:** [X.Y.Z]  
+**Created:** [YYYY-MM-DD]  
+**Last Updated:** [YYYY-MM-DD]  
+**Status:** [Draft / Review / Approved / Implemented]
 
 ---
 
-### User Story 2 - [Brief Title] (Priority: P2)
+## Constitution Alignment
 
-[Describe this user journey in plain language]
+**Primary Principles Applied:**
+- [Principle Name]: [How this spec implements it]
+- [Principle Name]: [How this spec implements it]
 
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+**Potential Conflicts:** [None / Description of any principle tensions and resolution]
 
 ---
 
-### User Story 3 - [Brief Title] (Priority: P3)
+## Overview
 
-[Describe this user journey in plain language]
+### Purpose
+[2-3 sentences explaining what this component/feature does and why it exists]
 
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+### Context
+[How this fits into the broader Echo system - references to related components]
 
 ---
 
-[Add more user stories as needed, each with an assigned priority]
-
-### Edge Cases
-
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
-
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
-
-## Requirements *(mandatory)*
-
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
+## Requirements
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+**MUST Have (P0):**
+1. [Requirement 1 - testable, specific]
+2. [Requirement 2 - testable, specific]
 
-*Example of marking unclear requirements:*
+**SHOULD Have (P1):**
+1. [Requirement 1 - desirable but not blocking]
+2. [Requirement 2 - desirable but not blocking]
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+**MAY Have (P2):**
+1. [Nice-to-have feature]
 
-### Key Entities *(include if feature involves data)*
+### Non-Functional Requirements
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+**Performance:**
+- Response time: [< X seconds]
+- Throughput: [X requests/second]
+- Resource usage: [Memory/CPU constraints]
 
-## Success Criteria *(mandatory)*
+**Reliability:**
+- Uptime: [X%]
+- Error rate: [< X%]
+- Retry policy: [Max X retries with Y backoff]
 
-<!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
--->
+**Security:**
+- Authentication: [Method]
+- Authorization: [Access control rules]
+- Data encryption: [At rest / In transit]
 
-### Measurable Outcomes
+**Usability:**
+- Loading states: [Required/Not required]
+- Error messages: [Chinese language, empathetic tone]
+- Accessibility: [Responsive design, color contrast]
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+---
+
+## System Design
+
+### Architecture Diagram
+```
+[ASCII diagram or link to visual diagram showing component relationships]
+
+User → Frontend → API Gateway → Service Layer → Data Layer
+                      ↓
+                  External APIs (LLM, Image Gen, etc.)
+```
+
+### Component Breakdown
+
+#### Component 1: [Name]
+- **Responsibility:** [What it does]
+- **Interfaces:** [Input/output contracts]
+- **Dependencies:** [What it depends on]
+
+#### Component 2: [Name]
+- **Responsibility:** [What it does]
+- **Interfaces:** [Input/output contracts]
+- **Dependencies:** [What it depends on]
+
+---
+
+## Data Model
+
+### Database Schema (if applicable)
+
+```typescript
+interface [EntityName] {
+  id: string;
+  [field1]: [type];
+  [field2]: [type];
+  created_at: timestamp;
+  updated_at: timestamp;
+}
+```
+
+### Data Flow
+
+1. [Step 1: Data enters system]
+2. [Step 2: Transformation/processing]
+3. [Step 3: Storage/output]
+
+### Data Validation Rules
+
+- [Field name]: [Validation rule - type, range, format]
+- [Field name]: [Validation rule - type, range, format]
+
+---
+
+## API Specification
+
+### Endpoint: [METHOD /path/to/endpoint]
+
+**Description:** [What this endpoint does]
+
+**Request:**
+```typescript
+{
+  [param1]: [type],  // [Description]
+  [param2]: [type]   // [Description]
+}
+```
+
+**Response (Success - 200):**
+```typescript
+{
+  [field1]: [type],  // [Description]
+  [field2]: [type]   // [Description]
+}
+```
+
+**Response (Error - 4xx/5xx):**
+```typescript
+{
+  error: string,
+  error_code: string,
+  message: string  // Chinese language, user-friendly
+}
+```
+
+**Error Codes:**
+- `VALIDATION_ERROR`: [When this occurs]
+- `GENERATION_FAILED`: [When this occurs]
+- `RATE_LIMIT_EXCEEDED`: [When this occurs]
+
+---
+
+## Implementation Details
+
+### Technology Stack
+- **Language/Framework:** [e.g., TypeScript, React]
+- **Libraries:** [Key dependencies]
+- **External Services:** [APIs, third-party services]
+
+### Key Algorithms
+
+#### Algorithm 1: [Name]
+**Purpose:** [What it solves]
+
+**Pseudocode:**
+```
+function algorithmName(input):
+  // Step-by-step logic
+  return output
+```
+
+**Complexity:** [Time/space complexity]
+
+### Configuration
+
+```typescript
+const CONFIG = {
+  [setting1]: process.env.[ENV_VAR] || [default],
+  [setting2]: [value]
+};
+```
+
+**Environment Variables Required:**
+- `ENV_VAR_NAME`: [Description, where to obtain]
+
+---
+
+## Error Handling
+
+### Error Scenarios
+
+| Scenario | Detection | Response | User Message (Chinese) |
+|----------|-----------|----------|------------------------|
+| API timeout | After X seconds | Retry 3x, then fail gracefully | "正在重新构思，请稍候..." |
+| Invalid input | On validation | Return 400 error | "请检查输入内容" |
+| Generation failure | API returns error | Retry with fallback prompt | "生成失败，正在重试..." |
+
+### Logging Strategy
+
+- **Info:** [What to log]
+- **Warning:** [What to log]
+- **Error:** [What to log - include context for debugging]
+
+---
+
+## Testing Plan
+
+### Unit Tests
+
+```typescript
+describe('[Component Name]', () => {
+  test('[Test case 1]', () => {
+    // Test implementation
+  });
+  
+  test('[Test case 2]', () => {
+    // Test implementation
+  });
+});
+```
+
+### Integration Tests
+
+- [ ] Test API endpoint with valid input
+- [ ] Test API endpoint with invalid input
+- [ ] Test error handling and retries
+- [ ] Test performance under load
+
+### Edge Cases
+
+1. [Edge case 1 - how to handle]
+2. [Edge case 2 - how to handle]
+
+---
+
+## Performance Optimization
+
+### Bottlenecks Identified
+1. [Bottleneck 1]: [Solution]
+2. [Bottleneck 2]: [Solution]
+
+### Caching Strategy (if applicable)
+- **What to cache:** [Data/responses]
+- **Cache duration:** [TTL]
+- **Invalidation trigger:** [When to clear cache]
+
+### Monitoring Metrics
+- [Metric 1]: [Target threshold]
+- [Metric 2]: [Target threshold]
+
+---
+
+## Security Considerations
+
+### Threat Model
+- **Threat 1:** [Description] → **Mitigation:** [How addressed]
+- **Threat 2:** [Description] → **Mitigation:** [How addressed]
+
+### Input Sanitization
+- [Input field 1]: [Sanitization method]
+- [Input field 2]: [Sanitization method]
+
+### Secrets Management
+- API keys stored in: [Environment variables / Secrets manager]
+- Rotation policy: [If applicable]
+
+---
+
+## Deployment
+
+### Prerequisites
+- [ ] [Dependency 1 installed/configured]
+- [ ] [Environment variable set]
+- [ ] [Database migration run]
+
+### Deployment Steps
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+### Rollback Plan
+[How to revert if deployment fails]
+
+### Smoke Tests Post-Deployment
+- [ ] [Critical path 1 works]
+- [ ] [Critical path 2 works]
+
+---
+
+## Documentation
+
+### User-Facing Documentation
+- [ ] [Feature guide written]
+- [ ] [API documentation published]
+
+### Developer Documentation
+- [ ] [Code comments added]
+- [ ] [README updated]
+- [ ] [Architecture diagram finalized]
+
+---
+
+## Future Enhancements
+
+**V1.1 Improvements:**
+- [Improvement 1]
+- [Improvement 2]
+
+**Technical Debt:**
+- [Known limitation 1 - plan to address]
+- [Known limitation 2 - plan to address]
+
+---
+
+## Appendix
+
+### References
+- [Link to PRD section]
+- [Link to design mockups]
+- [Link to research/discovery doc]
+
+### Glossary
+- **Term 1:** [Definition]
+- **Term 2:** [Definition]
+
+---
+
+## Change Log
+
+| Version | Date | Changes | Author |
+|---------|------|---------|--------|
+| 1.0.0 | [YYYY-MM-DD] | Initial specification | [Name] |
+
+---
+
+**Review Status:**
+- [ ] Technical review completed
+- [ ] Security review completed
+- [ ] Constitution compliance verified
+- [ ] Approved for implementation

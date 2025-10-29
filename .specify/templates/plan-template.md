@@ -1,104 +1,162 @@
-# Implementation Plan: [FEATURE]
+# Project Plan: [FEATURE_NAME]
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Status:** [Draft / In Progress / Complete]  
+**Created:** [YYYY-MM-DD]  
+**Last Updated:** [YYYY-MM-DD]  
+**Owner:** [TEAM_MEMBER_NAME]
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+---
 
-## Summary
+## Constitution Compliance Check
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Before proceeding, verify alignment with [Echo Project Constitution](../memory/constitution.md):
 
-## Technical Context
+- [ ] **Generation-First (P1):** Does this feature support the generation workflow without adding chat/conversation capabilities?
+- [ ] **Emotional Authenticity (P2):** Does this enhance deep understanding or persona quality?
+- [ ] **Visual Excellence (P3):** Does this meet aesthetic standards defined in PRD Section 9?
+- [ ] **Privacy & Ethics (P4):** Have security and data protection requirements been addressed?
+- [ ] **Performance (P5):** Are performance targets documented (generation times, error handling)?
+- [ ] **Simplicity (P6):** Is this feature essential to MVP or properly scoped for future iteration?
+- [ ] **Cultural Appropriateness (P7):** Is all content Chinese-first and culturally reviewed?
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
+**Overall Assessment:** [PASS / NEEDS REVISION]  
+**Notes:** [Any principle conflicts or clarifications needed]
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+---
 
-## Constitution Check
+## Objective
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+**What:** [One sentence describing what this plan achieves]
 
-[Gates determined based on constitution file]
+**Why:** [Business/user value justification]
 
-## Project Structure
+**Success Criteria:**
+1. [Measurable outcome 1]
+2. [Measurable outcome 2]
+3. [Measurable outcome 3]
 
-### Documentation (this feature)
+---
 
-```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+## Scope
+
+### In Scope
+- [Feature component 1]
+- [Feature component 2]
+- [Feature component 3]
+
+### Out of Scope
+- [Explicitly excluded item 1]
+- [Explicitly excluded item 2]
+
+### Dependencies
+- [External dependency 1 - API, library, etc.]
+- [Internal dependency 1 - other feature/module]
+
+---
+
+## Timeline
+
+| Phase | Duration | Deliverables |
+|-------|----------|--------------|
+| Research & Design | [X days] | [Wireframes, API research] |
+| Implementation | [X days] | [Core functionality] |
+| Testing & Polish | [X days] | [Bug fixes, optimization] |
+| **Total** | **[X days]** | |
+
+**Target Completion:** [YYYY-MM-DD]
+
+---
+
+## Technical Approach
+
+### Architecture
+[Brief description of technical architecture - components, data flow, API integrations]
+
+### Key Technologies
+- **Frontend:** [Framework/libraries]
+- **Backend:** [Framework/services]
+- **AI/ML:** [Models/APIs]
+- **Storage:** [Database/file storage]
+
+### API Design (if applicable)
+```typescript
+// Example endpoint
+POST /api/[endpoint-name]
+Request: { ... }
+Response: { ... }
 ```
 
-### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+---
 
-```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+## User Experience Flow
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+1. [Step 1: User action]
+2. [Step 2: System response]
+3. [Step 3: User sees/does]
+4. [Step 4: Completion state]
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+**UI Mockups:** [Link to Figma/screenshots or embed description]
 
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+---
 
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
+## Risk Assessment
 
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
-```
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| [Risk 1] | High/Med/Low | High/Med/Low | [How to mitigate] |
+| [Risk 2] | High/Med/Low | High/Med/Low | [How to mitigate] |
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+---
 
-## Complexity Tracking
+## Testing Strategy
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+### Unit Tests
+- [ ] [Component/function 1]
+- [ ] [Component/function 2]
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+### Integration Tests
+- [ ] [API integration 1]
+- [ ] [Feature flow 1]
+
+### User Testing
+- [ ] [Usability scenario 1]
+- [ ] [Edge case scenario 1]
+
+### Performance Benchmarks
+- [ ] [Metric 1: target value]
+- [ ] [Metric 2: target value]
+
+---
+
+## Rollout Plan
+
+**Phase 1 - Internal Testing:**
+- [Testing approach]
+- [Success criteria before Phase 2]
+
+**Phase 2 - MVP Release:**
+- [Deployment steps]
+- [Monitoring plan]
+
+**Phase 3 - Iteration:**
+- [Based on user feedback]
+- [Planned improvements]
+
+---
+
+## Open Questions
+
+1. [Question requiring decision/research]
+2. [Question requiring decision/research]
+
+---
+
+## Change Log
+
+| Date | Change | Reason |
+|------|--------|--------|
+| [YYYY-MM-DD] | [Description] | [Why changed] |
+
+---
+
+**Approval Status:** [Pending / Approved by [NAME] on [DATE]]
