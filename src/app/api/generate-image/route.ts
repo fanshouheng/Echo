@@ -135,13 +135,15 @@ export async function POST(request: NextRequest) {
           usedModel = "replicate-flux";
           console.log("Attempting Replicate Flux generation...");
           for (let i = 0; i < count; i++) {
-            const imageUrl = await generateImageWithFlux(
+            const generatedImages = await generateImageWithFlux(
               fluxPrompt,
-              negativePrompt,
-              dimensions.width,
-              dimensions.height
+              {
+                aspectRatio: aspectRatio, // Use aspectRatio string (e.g., "9:16")
+                numOutputs: 1, // Generate one image per iteration
+              }
             );
-            images.push(imageUrl);
+            // generateImageWithFlux returns array, take first image
+            images.push(generatedImages[0]);
           }
           console.log(`✅ Replicate Flux generated ${images.length} images successfully`);
         } catch (fluxError) {
@@ -152,13 +154,16 @@ export async function POST(request: NextRequest) {
             usedModel = "replicate-sdxl";
             console.log("Attempting Replicate SDXL generation...");
             for (let i = 0; i < count; i++) {
-              const imageUrl = await generateImageWithSDXL(
+              const generatedImages = await generateImageWithSDXL(
                 sdxlPrompt,
-                negativePrompt,
-                dimensions.width,
-                dimensions.height
+                {
+                  width: dimensions.width,
+                  height: dimensions.height,
+                  numOutputs: 1, // Generate one image per iteration
+                }
               );
-              images.push(imageUrl);
+              // generateImageWithSDXL returns array, take first image
+              images.push(generatedImages[0]);
             }
             console.log(`✅ Replicate SDXL generated ${images.length} images successfully`);
           } catch (sdxlError) {
