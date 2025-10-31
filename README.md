@@ -73,6 +73,27 @@ npm run build
 npm start
 ```
 
+### 部署上线
+
+项目已准备好部署到生产环境。
+
+**推荐平台：**
+- 🌟 **[Vercel](https://vercel.com)**（Next.js 官方推荐，零配置部署）
+- [Netlify](https://netlify.com)（备选方案）
+
+**快速部署：**
+
+1. 将代码推送到 GitHub
+2. 在 Vercel/Netlify 导入仓库
+3. 配置环境变量（API Keys）
+4. 点击部署，5 分钟内完成
+
+**详细部署指南：** 查看 [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+**部署后成本：**
+- Vercel 托管：免费（Hobby 计划足够使用）
+- 每月生成 100 个 Echo 约需 ¥1.00（仅 DeepSeek API 费用）
+
 ---
 
 ## 📁 项目结构
