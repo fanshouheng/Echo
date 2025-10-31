@@ -14,6 +14,20 @@ interface ShareCardProps {
   template?: "minimalist" | "elegant";
 }
 
+/**
+ * Check if image URL is from Pollinations AI
+ * Pollinations AI URLs don't need Next.js Image optimization proxy
+ */
+function isPollinationsUrl(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname === "image.pollinations.ai" || urlObj.hostname.includes("pollinations.ai");
+  } catch {
+    // If URL parsing fails, check if it contains pollinations
+    return url.includes("pollinations.ai");
+  }
+}
+
 export function ShareCard({ personality, imageUrl, template = "minimalist" }: ShareCardProps) {
   if (template === "elegant") {
     return <ElegantTemplate personality={personality} imageUrl={imageUrl} />;
@@ -41,7 +55,16 @@ function MinimalistTemplate({ personality, imageUrl }: Omit<ShareCardProps, "tem
       <div className="relative z-10 h-full flex flex-col p-12">
         {/* Image */}
         <div className="relative w-full h-[600px] rounded-2xl overflow-hidden shadow-2xl mb-8">
-          <Image src={imageUrl} alt={personality.name} fill className="object-cover" />
+          {isPollinationsUrl(imageUrl) ? (
+            <img 
+              src={imageUrl} 
+              alt={personality.name} 
+              className="absolute inset-0 w-full h-full object-cover" 
+              crossOrigin="anonymous" 
+            />
+          ) : (
+            <Image src={imageUrl} alt={personality.name} fill className="object-cover" />
+          )}
         </div>
 
         {/* Text Content */}
@@ -95,7 +118,11 @@ function ElegantTemplate({ personality, imageUrl }: Omit<ShareCardProps, "templa
     >
       {/* Image Background */}
       <div className="absolute inset-0">
-        <Image src={imageUrl} alt={personality.name} fill className="object-cover opacity-30 blur-xl" />
+        {isPollinationsUrl(imageUrl) ? (
+          <img src={imageUrl} alt={personality.name} className="w-full h-full object-cover opacity-30 blur-xl" crossOrigin="anonymous" />
+        ) : (
+          <Image src={imageUrl} alt={personality.name} fill className="object-cover opacity-30 blur-xl" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0F0F1E]/80 to-[#0F0F1E]" />
       </div>
 
@@ -103,7 +130,16 @@ function ElegantTemplate({ personality, imageUrl }: Omit<ShareCardProps, "templa
       <div className="relative z-10 h-full flex flex-col p-12">
         {/* Top: Image */}
         <div className="relative w-[500px] h-[500px] mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 mb-12">
-          <Image src={imageUrl} alt={personality.name} fill className="object-cover" />
+          {isPollinationsUrl(imageUrl) ? (
+            <img 
+              src={imageUrl} 
+              alt={personality.name} 
+              className="absolute inset-0 w-full h-full object-cover" 
+              crossOrigin="anonymous" 
+            />
+          ) : (
+            <Image src={imageUrl} alt={personality.name} fill className="object-cover" />
+          )}
         </div>
 
         {/* Bottom: Text */}

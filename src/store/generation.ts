@@ -6,6 +6,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { PersonalityProfile } from "@/types/personality";
+import { PartnerPersonalityProfile } from "@/types/partner-personality";
 
 type GenerationStatus = "idle" | "generating-personality" | "generating-images" | "completed" | "error";
 
@@ -16,6 +17,7 @@ interface GenerationState {
 
   // Generated data
   personality: PersonalityProfile | null;
+  partner: PartnerPersonalityProfile | null; // Full partner data with enhanced details
   images: string[];
   selectedImageIndex: number;
 
@@ -28,6 +30,7 @@ interface GenerationState {
   setStatus: (status: GenerationStatus) => void;
   setError: (error: string | null) => void;
   setPersonality: (personality: PersonalityProfile) => void;
+  setPartner: (partner: PartnerPersonalityProfile) => void; // Set full partner data
   setImages: (images: string[], usedModel: "flux" | "sdxl") => void;
   selectImage: (index: number) => void;
   reset: () => void;
@@ -43,6 +46,7 @@ const initialState = {
   status: "idle" as GenerationStatus,
   error: null,
   personality: null,
+  partner: null,
   images: [],
   selectedImageIndex: 0,
   personalityGeneratedAt: null,
@@ -69,6 +73,16 @@ export const useGenerationStore = create<GenerationState>()(
       setPersonality: (personality: PersonalityProfile) => {
         set({
           personality,
+          personalityGeneratedAt: Date.now(),
+          status: "completed",
+          error: null,
+        });
+      },
+
+      // Set full partner data
+      setPartner: (partner: PartnerPersonalityProfile) => {
+        set({
+          partner,
           personalityGeneratedAt: Date.now(),
           status: "completed",
           error: null,
@@ -126,6 +140,7 @@ export const useGenerationStore = create<GenerationState>()(
       name: "echo-generation-storage",
       partialize: (state) => ({
         personality: state.personality,
+        partner: state.partner,
         images: state.images,
         selectedImageIndex: state.selectedImageIndex,
         personalityGeneratedAt: state.personalityGeneratedAt,

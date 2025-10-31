@@ -105,6 +105,8 @@ export function QuestionCard({ question, answer, onAnswer }: QuestionCardProps) 
           {/* Text Input */}
           {question.inputType === "text" && (
             <textarea
+              id={`question-${question.id}-text-input`}
+              name={`question-${question.id}-text-input`}
               className="w-full min-h-[120px] p-4 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
               placeholder={question.placeholder || "请输入你的答案..."}
               value={selectedValue as string}
@@ -117,6 +119,8 @@ export function QuestionCard({ question, answer, onAnswer }: QuestionCardProps) 
           {question.inputType === "scale" && (
             <div className="space-y-4">
               <input
+                id={`question-${question.id}-scale-input`}
+                name={`question-${question.id}-scale-input`}
                 type="range"
                 min="1"
                 max="10"

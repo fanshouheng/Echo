@@ -91,7 +91,7 @@ export default function HomePage() {
           variants={fadeInUp}
           className="text-xl md:text-2xl text-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          用访谈，生成你的灵魂回声
+          用访谈，生成你的理想伴侣
         </motion.p>
 
         {/* Description */}
@@ -99,7 +99,7 @@ export default function HomePage() {
           variants={fadeInUp}
           className="text-lg text-muted-foreground max-w-xl mx-auto"
         >
-          通过 10 分钟深度访谈，创造一个真正懂你的数字人格
+          通过 10 分钟深度访谈，基于心理学理论创造一个与你完美匹配的伴侣人格
         </motion.p>
 
         {/* CTA Button */}
@@ -120,10 +120,10 @@ export default function HomePage() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto pt-12"
         >
           <motion.div variants={fadeInUp} className="space-y-2">
-            <div className="text-4xl">💭</div>
-            <h3 className="text-lg font-semibold text-foreground">深度理解</h3>
+            <div className="text-4xl">💝</div>
+            <h3 className="text-lg font-semibold text-foreground">科学匹配</h3>
             <p className="text-sm text-muted-foreground">
-              12个精心设计的问题，探索你的内心世界
+              基于依恋理论和人格心理学，精准匹配你的情感需求
             </p>
           </motion.div>
 
@@ -131,15 +131,15 @@ export default function HomePage() {
             <div className="text-4xl">🎨</div>
             <h3 className="text-lg font-semibold text-foreground">视觉呈现</h3>
             <p className="text-sm text-muted-foreground">
-              AI生成独特的人格形象，将抽象具象化
+              AI生成理想伴侣的形象，让抽象的匹配具象化
             </p>
           </motion.div>
 
           <motion.div variants={fadeInUp} className="space-y-2">
-            <div className="text-4xl">✨</div>
-            <h3 className="text-lg font-semibold text-foreground">灵魂共鸣</h3>
+            <div className="text-4xl">💕</div>
+            <h3 className="text-lg font-semibold text-foreground">完美互补</h3>
             <p className="text-sm text-muted-foreground">
-              不是聊天机器人，而是你的情感镜像
+              不是完美的理想化，而是真实可爱、与你互补的伴侣
             </p>
           </motion.div>
         </motion.div>
@@ -149,7 +149,7 @@ export default function HomePage() {
           variants={fadeIn}
           className="text-base md:text-lg italic text-muted-foreground border-l-4 border-primary pl-4 max-w-2xl mx-auto text-left"
         >
-          "Echo，不是回荡的声音，而是你灵魂的回应。"
+          "Echo，不是回荡的声音，而是你心中理想伴侣的回应。"
         </motion.blockquote>
       </motion.div>
     </div>

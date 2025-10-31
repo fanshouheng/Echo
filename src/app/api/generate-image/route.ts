@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateImageWithFlux, generateImageWithSDXL } from "@/lib/api/replicate";
 import { generateImageWithImagen, isGeminiConfigured } from "@/lib/api/gemini";
-import { generateMultipleImagesWithPollinations } from "@/lib/api/pollinations";
+import { generateImageWithPollinations, generateMultipleImagesWithPollinations } from "@/lib/api/pollinations";
 import { handleAPIError, AppError, ErrorCode } from "@/lib/api/error-handler";
 import { generateImageRequestSchema } from "@/lib/validators/schemas";
 import {
@@ -16,6 +16,7 @@ import {
   negativePrompt,
   getImageDimensions,
 } from "@/lib/prompts/image";
+import { partnerToLegacyPersonality } from "@/types/partner-personality";
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -23,11 +24,14 @@ export async function POST(request: NextRequest) {
   try {
     console.log("=== Generate Image API Called ===");
     
-    // Parse request body
+    // Parse request body (only once!)
     const body = await request.json();
     console.log("Request received - Count:", body.count, "Aspect ratio:", body.aspectRatio);
 
-    // Validate request
+    // Check if request includes partner data (optional, for enhanced prompts)
+    const partnerData = (body as any).partner;
+
+    // Validate request (only validate required fields)
     const validationResult = generateImageRequestSchema.safeParse(body);
     if (!validationResult.success) {
       console.error("Validation error:", validationResult.error);
@@ -41,6 +45,15 @@ export async function POST(request: NextRequest) {
     const { personality, aspectRatio = "9:16", count = 1 } = validationResult.data;
     console.log("Personality:", personality.name);
     
+    // Use partner data if available for better prompt generation, otherwise use legacy personality
+    const promptPersonality = partnerData || personality;
+    
+    if (partnerData) {
+      console.log("🎨 Using partner data for enhanced prompt generation");
+    } else {
+      console.log("🎨 Using legacy personality data for prompt generation");
+    }
+    
     // Check API configurations
     const geminiConfigured = isGeminiConfigured();
     const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
@@ -50,40 +63,47 @@ export async function POST(request: NextRequest) {
       console.warn("⚠️ Gemini API not configured, will try Replicate fallback");
     }
 
-    // Build prompts
-    const fluxPrompt = buildFluxPrompt(personality);
-    const sdxlPrompt = buildSDXLPrompt(personality);
-    const pollinationsPrompt = buildPollinationsPrompt(personality); // Simplified for URL
+    // Build prompts using enhanced personality data if available
+    // Generate different scenes for each image (0, 1, 2 for count=3)
+    const fluxPrompt = buildFluxPrompt(promptPersonality);
+    const sdxlPrompt = buildSDXLPrompt(promptPersonality);
     const dimensions = getImageDimensions(aspectRatio);
 
-    // Generate images
+    // Generate images with different scenes
     const images: string[] = [];
-    let usedModel = "pollinations-flux";
+    let usedModel = "pollinations-flux-anime";
 
     try {
       // Primary: Pollinations AI (free, no API key required)
-      console.log("🎨 Attempting Pollinations AI generation...");
-      console.log("Model: flux");
+      // Generate each image with a different scene
+      console.log("🎨 Attempting Pollinations AI generation (Pixel Art + Anime Style)...");
+      console.log("Model: flux-anime");
       console.log("Dimensions:", `${dimensions.width}x${dimensions.height}`);
       console.log("Count:", count);
-      console.log("Prompt:", pollinationsPrompt);
-      console.log("Prompt length:", pollinationsPrompt.length, "characters");
+      console.log("Style: Pixel Art + Anime + Story Scenes");
       
-      const generatedImages = await generateMultipleImagesWithPollinations(
-        pollinationsPrompt, // Use simplified prompt
-        count,
-        {
-          width: dimensions.width,
-          height: dimensions.height,
-          model: "flux",
-          nologo: true,
-          enhance: true,
-        }
-      );
+      // Generate images one by one with different scene prompts
+      for (let i = 0; i < count; i++) {
+        const scenePrompt = buildPollinationsPrompt(promptPersonality, i);
+        console.log(`📝 Scene ${i + 1} prompt:`, scenePrompt.substring(0, 150) + "...");
+        
+        const sceneImage = await generateImageWithPollinations(
+          scenePrompt,
+          {
+            width: dimensions.width,
+            height: dimensions.height,
+            model: "turbo", // Use turbo model (faster and more reliable than flux)
+            nologo: true,
+            enhance: false, // Disable enhance to reduce URL length
+            seed: Date.now() + i, // Different seed for each image
+          }
+        );
+        
+        images.push(...sceneImage);
+        console.log(`✅ Scene ${i + 1} generated successfully`);
+      }
       
-      console.log(`✅ Pollinations generated ${generatedImages.length} images successfully`);
-      images.push(...generatedImages);
-      usedModel = "pollinations-flux";
+      console.log(`✅ Pollinations generated ${images.length} images successfully`);
       
     } catch (pollinationsError: any) {
       console.error("❌ Pollinations generation failed:");

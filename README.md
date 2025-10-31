@@ -187,7 +187,8 @@ Echo采用**Big Five人格理论**（五大人格特质模型），这是心理�
 - **State:** Zustand
 - **Animation:** Framer Motion
 - **AI:**
-  - DeepSeek-Chat (人格生成，推荐) / OpenAI GPT-4o (备用)
+  - **DeepSeek Reasoner (思考模式)** 🧠 - 人格生成首选，启用推理能力提升生成质量
+  - DeepSeek-Chat (备用) / OpenAI GPT-4o (备用)
   - **Pollinations AI (图像生成，免费推荐)** 🆓
   - Google Gemini Imagen 4 (图像生成备用) / Replicate Flux/SDXL (备用)
 - **Validation:** Zod
@@ -226,12 +227,14 @@ Echo采用**Big Five人格理论**（五大人格特质模型），这是心理�
 
 - [x] **Phase 1-2:** 项目初始化 + API 集成基础
 - [x] **Phase 3:** 灵魂访谈流程（25题专业问卷，基于Big Five理论）⭐ NEW
-- [x] **Phase 4:** AI人格生成（DeepSeek-Chat + 专业Prompt）⭐ UPGRADED
+- [x] **Phase 4:** AI人格生成（DeepSeek Reasoner + 专业Prompt）⭐ UPGRADED
+  - 🧠 **思考模式已启用** - 使用 DeepSeek Reasoner 推理模型，显著提升生成质量
   - ✨ 新增：Big Five 五维人格分数
   - ✨ 新增：6大生活细节分析
   - ✨ 新增：5个典型行为场景
   - ✨ 新增：4个相处互动画面
   - ✨ 风格：文艺与生活气息并存
+  - ⚙️ 配置：max_tokens=8000, 无超时限制（后台持续生成，前端10分钟超时，后端5分钟限制），支持自动回退机制
 - [x] **Phase 5:** 视觉形象生成（Pollinations AI免费 + Gemini/Flux备用）⭐ UPGRADED
 - [x] **Phase 6:** Echo档案展示（完整人格档案页面）
 - [x] 响应式设计（移动端 + 桌面端）

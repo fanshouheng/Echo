@@ -18,7 +18,7 @@ export async function generateImageWithPollinations(
     width?: number;
     height?: number;
     seed?: number;
-    model?: "flux" | "flux-pro" | "flux-realism" | "turbo" | "flux-anime";
+    model?: "flux" | "flux-pro" | "flux-realism" | "turbo" | "flux-anime" | "flux-schnell" | "anime";
     nologo?: boolean;
     enhance?: boolean;
   } = {}
@@ -42,31 +42,44 @@ export async function generateImageWithPollinations(
     // URL encode the prompt
     const encodedPrompt = encodeURIComponent(prompt);
     
-    // Build the URL with parameters
+    // Check URL length (Pollinations has practical limit around 2000 chars)
+    const baseUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}`;
     const params = new URLSearchParams({
       width: width.toString(),
       height: height.toString(),
       nologo: nologo.toString(),
       enhance: enhance.toString(),
-      model: model,
     });
+    
+    // Only add model if specified and not default
+    if (model && model !== "flux") {
+      params.append("model", model);
+    }
 
     if (seed !== undefined) {
       params.append("seed", seed.toString());
     }
 
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?${params.toString()}`;
+    const fullUrl = `${baseUrl}?${params.toString()}`;
+    
+    // Warn if URL is too long
+    if (fullUrl.length > 2000) {
+      console.warn(`⚠️ URL length (${fullUrl.length}) exceeds recommended limit (2000)`);
+      console.warn(`⚠️ Prompt:`, prompt);
+    }
     
     console.log("📝 Generated Pollinations URL");
-    console.log("  URL:", imageUrl);
-    console.log("  URL length:", imageUrl.length);
+    console.log("  URL length:", fullUrl.length);
+    console.log("  Prompt length:", prompt.length);
+    console.log("  Model:", model || "flux (default)");
+    console.log("  Full URL preview:", fullUrl.substring(0, 200) + "...");
 
     // Pollinations generates images on-demand, no need to pre-check
     // Just return the URL directly
     console.log(`✅ Image URL generated successfully`);
 
     // Return the image URL (Pollinations generates on-the-fly)
-    return [imageUrl];
+    return [fullUrl];
   } catch (error: any) {
     console.error("❌ Pollinations generation error:");
     console.error("  Error type:", error?.constructor?.name);

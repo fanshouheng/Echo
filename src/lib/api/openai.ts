@@ -39,14 +39,27 @@ export async function generateCompletion(
     temperature?: number;
     maxTokens?: number;
     maxRetries?: number;
+    enableThinking?: boolean; // 开启思考模式
   } = {}
 ): Promise<string> {
   const {
-    model = process.env.DEEPSEEK_API_KEY ? "deepseek-chat" : "gpt-4o",
+    model,
     temperature = 0.7,
     maxTokens = 2000,
     maxRetries = 3,
+    enableThinking = true, // 默认开启思考模式
   } = options;
+
+  // 如果使用 DeepSeek 且开启思考模式，优先使用推理模型
+  const useDeepSeek = !!process.env.DEEPSEEK_API_KEY;
+  const finalModel = model || (useDeepSeek && enableThinking ? "deepseek-reasoner" : useDeepSeek ? "deepseek-chat" : "gpt-4o");
+  const finalMaxTokens = enableThinking && finalModel === "deepseek-reasoner" ? Math.max(maxTokens, 8000) : maxTokens;
+  
+  if (enableThinking && finalModel === "deepseek-reasoner") {
+    console.log(`🧠 思考模式已启用: 使用 ${finalModel}, max_tokens=${finalMaxTokens}`);
+  } else {
+    console.log(`🤖 普通模式: 使用 ${finalModel}, max_tokens=${finalMaxTokens}`);
+  }
 
   const client = getOpenAIClient();
   let lastError: Error | null = null;
@@ -54,10 +67,10 @@ export async function generateCompletion(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const completion = await client.chat.completions.create({
-        model,
+        model: finalModel,
         messages,
         temperature,
-        max_tokens: maxTokens,
+        max_tokens: finalMaxTokens,
       });
 
       const content = completion.choices[0]?.message?.content;
@@ -118,11 +131,12 @@ export async function generateJSONCompletion<T>(
     model?: string;
     temperature?: number;
     maxRetries?: number;
+    enableThinking?: boolean; // 开启思考模式
   } = {}
 ): Promise<T> {
   const content = await generateCompletion(messages, {
     ...options,
-    maxTokens: 3000,
+    maxTokens: options.enableThinking ? 8000 : 3000, // 思考模式需要更多 tokens
   });
 
   try {

@@ -6,10 +6,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { InterviewQuestion, InterviewAnswer, InterviewState } from "@/types/interview";
-import { professionalQuestions as interviewQuestions } from "@/data/questions-professional";
+import { partnerMatchingQuestions as interviewQuestions } from "@/data/questions-partner-matching";
 
 // Version for cache busting (increment when questions change)
-const STORAGE_VERSION = 3; // v3: Switched to professional 25-question system
+const STORAGE_VERSION = 5; // v5: Revised questions to focus on user's own traits (not ideal partner), enhanced with more life details
 
 interface InterviewStore extends InterviewState {
   // Actions

@@ -12,6 +12,7 @@ import { useGenerationStore } from "@/store/generation";
 import { PersonalityCard } from "@/components/profile/PersonalityCard";
 import { ImageGallery } from "@/components/profile/ImageGallery";
 import { TraitDetails } from "@/components/profile/TraitDetails";
+import { LifeScenesCard } from "@/components/profile/LifeScenesCard";
 import { ShareDialog } from "@/components/share/ShareDialog";
 import { Button } from "@/components/ui/button";
 import { Share2, RefreshCw, Download } from "lucide-react";
@@ -19,7 +20,7 @@ import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { personality, images, hasPersonality, hasImages, getSelectedImage } =
+  const { personality, partner, images, hasPersonality, hasImages, getSelectedImage } =
     useGenerationStore();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -145,6 +146,13 @@ export default function ProfilePage() {
           <motion.section variants={fadeInUp}>
             <TraitDetails personality={personality} />
           </motion.section>
+
+          {/* Life Scenes (Enhanced Details) */}
+          {partner && (
+            <motion.section variants={fadeInUp}>
+              <LifeScenesCard partner={partner} />
+            </motion.section>
+          )}
 
           {/* Action Buttons */}
           <motion.section variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center pt-8">

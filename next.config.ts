@@ -18,6 +18,25 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    // Increase timeout for slow image generation services
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  // Disable image optimization for pollinations URLs to avoid timeout
+  async headers() {
+    return [
+      {
+        source: '/api/image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate',
+          },
+        ],
+      },
+    ];
   },
 };
 
