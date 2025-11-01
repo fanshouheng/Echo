@@ -44,74 +44,113 @@
 }
 
 :root {
+  /* Echo Design System - Light Mode (Soul App Inspired) */
+  /* 浅色模式：白、浅灰、黑 + 青色强调 */
+  
   --radius: 0.625rem;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  
+  /* Base Colors - 白色背景 */
+  --background: oklch(0.99 0 0); /* #FAFAFA - 接近纯白，柔和 */
+  --foreground: oklch(0.15 0 0); /* #262626 - 深黑文字 */
+  --card: oklch(1 0 0); /* #FFFFFF - 纯白卡片 */
+  --card-foreground: oklch(0.15 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.15 0 0);
+  
+  /* Primary - 青色（保持 Soul 风格） */
+  --primary: oklch(0.65 0.20 200); /* #00BFFF - 明亮青色 */
+  --primary-foreground: oklch(0.99 0 0); /* 白色文字在青色背景上 */
+  
+  /* Secondary - 浅灰色 */
+  --secondary: oklch(0.95 0 0); /* #F2F2F2 - 浅灰背景 */
+  --secondary-foreground: oklch(0.15 0 0);
+  
+  /* Muted - 中灰色 */
+  --muted: oklch(0.96 0 0); /* #F5F5F5 - 极浅灰背景 */
+  --muted-foreground: oklch(0.45 0 0); /* #737373 - 中灰文字 */
+  
+  /* Accent - 青色变体 */
+  --accent: oklch(0.70 0.18 195); /* #00D4FF - 更亮的青色 */
+  --accent-foreground: oklch(0.99 0 0);
+  
+  /* Destructive - 红色 */
+  --destructive: oklch(0.65 0.22 25);
+  
+  /* Borders & Inputs - 浅灰边框 */
+  --border: oklch(0.90 0 0); /* #E6E6E6 - 浅灰边框 */
+  --input: oklch(0.98 0 0); /* #FAFAFA - 输入框背景 */
+  --ring: oklch(0.65 0.20 200); /* 青色聚焦环 */
+  
+  /* Charts - 灰色系 + 青色 */
+  --chart-1: oklch(0.65 0.20 200); /* Primary cyan */
+  --chart-2: oklch(0.60 0 0); /* 中灰 */
+  --chart-3: oklch(0.45 0 0); /* 深灰 */
+  --chart-4: oklch(0.70 0.18 195); /* Bright cyan */
+  --chart-5: oklch(0.50 0 0); /* 浅灰 */
+  
+  /* Sidebar - 浅色 */
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.15 0 0);
+  --sidebar-primary: oklch(0.65 0.20 200);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.15 0 0);
+  --sidebar-border: oklch(0.90 0 0);
+  --sidebar-ring: oklch(0.65 0.20 200);
 }
 
 .dark {
-  /* Echo Design System - Dark Mode (Default) */
-  /* PRD Section 9: Color System */
-  --background: oklch(0.06 0 0); /* #0F0F1E - 深邃背景 */
-  --foreground: oklch(0.985 0 0); /* White text */
-  --card: oklch(0.11 0 0); /* #1A1A2E - 卡片背景 */
+  /* Echo Design System - Soul App Inspired Color Palette */
+  /* 黑白灰 + 青色配色方案，现代、简洁、科技感 */
+  
+  /* Base Colors - 黑白灰 */
+  --background: oklch(0.05 0 0); /* #0A0A0A - 深黑背景，类似黑胶质感 */
+  --foreground: oklch(0.985 0 0); /* #FFFFFF - 纯白文字 */
+  --card: oklch(0.12 0 0); /* #1F1F1F - 卡片背景（深灰） */
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.11 0 0);
+  --popover: oklch(0.12 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.68 0.15 285); /* #8B7FFF - 神秘紫 */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.75 0.14 345); /* #FF9ECD - 温柔粉 */
+  
+  /* Primary - 青色（强调色，类似 Soul app 的 cyan） */
+  --primary: oklch(0.65 0.20 200); /* #00BFFF - 明亮青色，Soul 风格 */
+  --primary-foreground: oklch(0.05 0 0); /* 深黑文字在青色背景上 */
+  
+  /* Secondary - 中灰色 */
+  --secondary: oklch(0.25 0 0); /* #404040 - 中灰色 */
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.73 0 0); /* #B8B8D1 - 次要文字 */
-  --accent: oklch(0.74 0.11 190); /* #4ECDC4 - 清新青 */
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.68 0.15 285); /* Match primary */
-  --chart-1: oklch(0.68 0.15 285); /* Primary purple */
-  --chart-2: oklch(0.75 0.14 345); /* Secondary pink */
-  --chart-3: oklch(0.74 0.11 190); /* Accent cyan */
-  --chart-4: oklch(0.78 0.12 35); /* #FFB88C - Warm */
-  --chart-5: oklch(0.73 0.09 230); /* #8EC5FC - Cool */
-  --sidebar: oklch(0.11 0 0);
+  
+  /* Muted - 浅灰色 */
+  --muted: oklch(0.20 0 0); /* #333333 - 浅灰色背景 */
+  --muted-foreground: oklch(0.60 0 0); /* #999999 - 灰色文字 */
+  
+  /* Accent - 青色变体（用于强调） */
+  --accent: oklch(0.70 0.18 195); /* #00D4FF - 更亮的青色 */
+  --accent-foreground: oklch(0.05 0 0);
+  
+  /* Destructive - 保持红色 */
+  --destructive: oklch(0.65 0.22 25);
+  
+  /* Borders & Inputs - 灰色边框 */
+  --border: oklch(0.30 0 0); /* #4D4D4D - 灰色边框 */
+  --input: oklch(0.15 0 0); /* #262626 - 输入框背景 */
+  --ring: oklch(0.65 0.20 200); /* 青色聚焦环 */
+  
+  /* Charts - 使用灰色系 + 青色 */
+  --chart-1: oklch(0.65 0.20 200); /* Primary cyan */
+  --chart-2: oklch(0.50 0 0); /* 中灰 */
+  --chart-3: oklch(0.35 0 0); /* 深灰 */
+  --chart-4: oklch(0.70 0.18 195); /* Bright cyan */
+  --chart-5: oklch(0.60 0 0); /* 浅灰 */
+  
+  /* Sidebar - 保持一致 */
+  --sidebar: oklch(0.12 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.68 0.15 285);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-primary: oklch(0.65 0.20 200);
+  --sidebar-primary-foreground: oklch(0.05 0 0);
+  --sidebar-accent: oklch(0.20 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: oklch(0.30 0 0);
+  --sidebar-ring: oklch(0.65 0.20 200);
 }
 
 @layer base {

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Logo 配色预览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: oklch(0.06 0 0); /* 深色背景 */
+            color: oklch(0.985 0 0);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+        }
+        
+        .scheme {
+            background: oklch(0.11 0 0);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .scheme-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .color-card {
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .color-box {
+            width: 100%;
+            height: 120px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .color-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .color-code {
+            font-size: 12px;
+            opacity: 0.7;
+            font-family: monospace;
+        }
+        
+        .logo-preview {
+            background: oklch(0.11 0 0);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        
+        .logo-icon::before,
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid;
+        }
+        
+        .logo-icon::before {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .logo-icon::after {
+            width: 90px;
+            height: 90px;
+            opacity: 0.6;
+        }
+        
+        .logo-text {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 方案 1: 暖珊瑚 + 琥珀金 */
+        .scheme-1 {
+            --primary: oklch(0.72 0.16 25); /* 暖珊瑚粉 */
+            --secondary: oklch(0.75 0.12 65); /* 琥珀金 */
+            --accent: oklch(0.70 0.14 15); /* 玫瑰粉 */
+        }
+        
+        .scheme-1 .color-1 { background: var(--primary); }
+        .scheme-1 .color-2 { background: var(--secondary); }
+        .scheme-1 .color-3 { background: var(--accent); }
+        .scheme-1 .logo-icon { background: var(--primary); }
+        .scheme-1 .logo-icon::before { border-color: var(--secondary); }
+        .scheme-1 .logo-icon::after { border-color: var(--accent); }
+        
+        /* 方案 2: 玫瑰粉 + 暖杏色 + 金 */
+        .scheme-2 {
+            --primary: oklch(0.68 0.15 5); /* 玫瑰粉 */
+            --secondary: oklch(0.77 0.10 50); /* 暖杏色 */
+            --accent: oklch(0.80 0.12 75); /* 金色 */
+        }
+        
+        .scheme-2 .color-1 { background: var(--primary); }
+        .scheme-2 .color-2 { background: var(--secondary); }
+        .scheme-2 .color-3 { background: var(--accent); }
+        .scheme-2 .logo-icon { background: var(--primary); }
+        .scheme-2 .logo-icon::before { border-color: var(--secondary); }
+        .scheme-2 .logo-icon::after { border-color: var(--accent); }
+        
+        /* 方案 3: 暖红 + 粉橙 + 暖米色 */
+        .scheme-3 {
+            --primary: oklch(0.65 0.18 15); /* 暖红 */
+            --secondary: oklch(0.74 0.14 40); /* 粉橙 */
+            --accent: oklch(0.82 0.06 60); /* 暖米色 */
+        }
+        
+        .scheme-3 .color-1 { background: var(--primary); }
+        .scheme-3 .color-2 { background: var(--secondary); }
+        .scheme-3 .color-3 { background: var(--accent); }
+        .scheme-3 .logo-icon { background: var(--primary); }
+        .scheme-3 .logo-icon::before { border-color: var(--secondary); }
+        .scheme-3 .logo-icon::after { border-color: var(--accent); }
+        
+        /* 方案 4: 柔粉 + 珊瑚 + 金色 */
+        .scheme-4 {
+            --primary: oklch(0.74 0.12 10); /* 柔粉色 */
+            --secondary: oklch(0.73 0.14 30); /* 珊瑚色 */
+            --accent: oklch(0.79 0.10 70); /* 淡金色 */
+        }
+        
+        .scheme-4 .color-1 { background: var(--primary); }
+        .scheme-4 .color-2 { background: var(--secondary); }
+        .scheme-4 .color-3 { background: var(--accent); }
+        .scheme-4 .logo-icon { background: var(--primary); }
+        .scheme-4 .logo-icon::before { border-color: var(--secondary); }
+        .scheme-4 .logo-icon::after { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Echo Logo 配色方案预览</h1>
+        
+        <!-- 方案 1: 暖珊瑚 + 琥珀金 -->
+        <div class="scheme scheme-1">
+            <div class="scheme-title">
+                <span>方案 1</span>
+                <span style="font-size: 14px; opacity: 0.7;">暖珊瑚 + 琥珀金 ⭐推荐</span>
+            </div>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-box color-1"></div>
+                    <div class="color-name">暖珊瑚粉</div>
+                    <div class="color-code">oklch(0.72 0.16 25)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-2"></div>
+                    <div class="color-name">琥珀金</div>
+                    <div class="color-code">oklch(0.75 0.12 65)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-3"></div>
+                    <div class="color-name">玫瑰粉</div>
+                    <div class="color-code">oklch(0.70 0.14 15)</div>
+                </div>
+            </div>
+            <div class="logo-preview">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Echo</div>
+            </div>
+        </div>
+        
+        <!-- 方案 2: 玫瑰粉 + 暖杏色 + 金 -->
+        <div class="scheme scheme-2">
+            <div class="scheme-title">
+                <span>方案 2</span>
+                <span style="font-size: 14px; opacity: 0.7;">玫瑰粉 + 暖杏色 + 金</span>
+            </div>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-box color-1"></div>
+                    <div class="color-name">玫瑰粉</div>
+                    <div class="color-code">oklch(0.68 0.15 5)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-2"></div>
+                    <div class="color-name">暖杏色</div>
+                    <div class="color-code">oklch(0.77 0.10 50)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-3"></div>
+                    <div class="color-name">金色</div>
+                    <div class="color-code">oklch(0.80 0.12 75)</div>
+                </div>
+            </div>
+            <div class="logo-preview">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Echo</div>
+            </div>
+        </div>
+        
+        <!-- 方案 3: 暖红 + 粉橙 + 暖米色 -->
+        <div class="scheme scheme-3">
+            <div class="scheme-title">
+                <span>方案 3</span>
+                <span style="font-size: 14px; opacity: 0.7;">暖红 + 粉橙 + 暖米色</span>
+            </div>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-box color-1"></div>
+                    <div class="color-name">暖红</div>
+                    <div class="color-code">oklch(0.65 0.18 15)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-2"></div>
+                    <div class="color-name">粉橙</div>
+                    <div class="color-code">oklch(0.74 0.14 40)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-3"></div>
+                    <div class="color-name">暖米色</div>
+                    <div class="color-code">oklch(0.82 0.06 60)</div>
+                </div>
+            </div>
+            <div class="logo-preview">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Echo</div>
+            </div>
+        </div>
+        
+        <!-- 方案 4: 柔粉 + 珊瑚 + 金色 -->
+        <div class="scheme scheme-4">
+            <div class="scheme-title">
+                <span>方案 4</span>
+                <span style="font-size: 14px; opacity: 0.7;">柔粉 + 珊瑚 + 金色</span>
+            </div>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-box color-1"></div>
+                    <div class="color-name">柔粉色</div>
+                    <div class="color-code">oklch(0.74 0.12 10)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-2"></div>
+                    <div class="color-name">珊瑚色</div>
+                    <div class="color-code">oklch(0.73 0.14 30)</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-box color-3"></div>
+                    <div class="color-name">淡金色</div>
+                    <div class="color-code">oklch(0.79 0.10 70)</div>
+                </div>
+            </div>
+            <div class="logo-preview">
+                <div class="logo-icon"></div>
+                <div class="logo-text">Echo</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
