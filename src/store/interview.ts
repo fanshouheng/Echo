@@ -72,7 +72,7 @@ export const useInterviewStore = create<InterviewStore>()(
       // Answer a question
       answerQuestion: (questionId: string, answer: string | string[]) => {
         const { answers } = get();
-        const existingIndex = answers.findIndex((a) => a.questionId === questionId);
+        const existingIndex = answers.findIndex((a: InterviewAnswer) => a.questionId === questionId);
 
         const newAnswer: InterviewAnswer = {
           questionId,
@@ -132,7 +132,7 @@ export const useInterviewStore = create<InterviewStore>()(
           return true;
         }
 
-        const answer = answers.find((a) => a.questionId === currentQuestion.id);
+        const answer = answers.find((a: InterviewAnswer) => a.questionId === currentQuestion.id);
         
         if (!answer) {
           return false;
@@ -155,7 +155,7 @@ export const useInterviewStore = create<InterviewStore>()(
       // Get answer for specific question
       getAnswerForQuestion: (questionId: string) => {
         const { answers } = get();
-        return answers.find((a) => a.questionId === questionId);
+        return answers.find((a: InterviewAnswer) => a.questionId === questionId);
       },
     }),
     {
@@ -167,18 +167,20 @@ export const useInterviewStore = create<InterviewStore>()(
         answers: state.answers,
         startTime: state.startTime,
         completedAt: state.completedAt,
-      }),
+      } as Partial<InterviewStore>),
       // Clear old cache when version changes
       migrate: (persistedState: any, version: number) => {
         if (version < STORAGE_VERSION) {
           console.log(`Clearing old interview cache (v${version} -> v${STORAGE_VERSION})`);
-          // Reset to initial state but keep the questions from source
+          // Return partial state - persist middleware will merge with full state
           return {
-            ...initialState,
-            questions: interviewQuestions, // Always use fresh questions
+            currentQuestionIndex: 0,
+            answers: [],
+            startTime: null,
+            completedAt: null,
           };
         }
-        return persistedState as InterviewStore;
+        return persistedState;
       },
     }
   )

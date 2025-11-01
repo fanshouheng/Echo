@@ -32,7 +32,21 @@ export interface InterviewQuestion {
   options?: QuestionOption[];
   placeholder?: string;
   required: boolean;
-  category: "emotion" | "communication" | "values" | "aesthetic" | "lifestyle" | "social" | "decision" | "openness";
+  category: 
+    | "emotion" 
+    | "communication" 
+    | "values" 
+    | "aesthetic" 
+    | "lifestyle" 
+    | "social" 
+    | "decision" 
+    | "openness"
+    | "attachment"        // 依恋风格相关
+    | "emotional_needs"   // 情感需求相关
+    | "personality"       // 人格特质相关
+    | "stress"           // 压力应对相关
+    | "fears"            // 恐惧相关
+    | "security";        // 安全感相关
 }
 
 /**
