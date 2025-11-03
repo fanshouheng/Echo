@@ -1,0 +1,56 @@
+[
+  {
+    "id": "bg-1",
+    "success": true,
+    "fileSize": "1146.59",
+    "path": "/images/background/bg-1.jpg"
+  },
+  {
+    "id": "bg-2",
+    "success": true,
+    "fileSize": "1066.97",
+    "path": "/images/background/bg-2.jpg"
+  },
+  {
+    "id": "bg-3",
+    "success": true,
+    "fileSize": "1122.86",
+    "path": "/images/background/bg-3.jpg"
+  },
+  {
+    "id": "bg-4",
+    "success": true,
+    "fileSize": "1014.84",
+    "path": "/images/background/bg-4.jpg"
+  },
+  {
+    "id": "bg-5",
+    "success": true,
+    "fileSize": "1238.19",
+    "path": "/images/background/bg-5.jpg"
+  },
+  {
+    "id": "bg-6",
+    "success": true,
+    "fileSize": "1124.50",
+    "path": "/images/background/bg-6.jpg"
+  },
+  {
+    "id": "bg-7",
+    "success": true,
+    "fileSize": "1004.63",
+    "path": "/images/background/bg-7.jpg"
+  },
+  {
+    "id": "bg-8",
+    "success": true,
+    "fileSize": "1110.33",
+    "path": "/images/background/bg-8.jpg"
+  },
+  {
+    "id": "bg-9",
+    "success": true,
+    "fileSize": "1072.58",
+    "path": "/images/background/bg-9.jpg"
+  }
+]

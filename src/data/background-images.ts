@@ -3,8 +3,8 @@
  * 9 images for 3×3 grid layout
  * Each image corresponds to one of the three features
  * 
- * Note: Currently using Unsplash placeholder images
- * Replace with your actual images later
+ * Images are generated locally and saved in public/images/background/
+ * Generated using AI with 9 different anime art styles
  */
 
 export interface BackgroundImage {
@@ -17,27 +17,27 @@ export interface BackgroundImage {
 }
 
 export const backgroundImages: BackgroundImage[] = [
-  // 深度理解 (Understanding) - Row 1
+  // 深度理解 (Understanding) - Row 1)
   {
     id: "bg-1",
-    url: "https://images.unsplash.com/photo-1559757148-5c3507c82635?w=800&h=600&fit=crop&q=80",
-    description: "通过心理学模型深度分析你的情感模式和依恋风格",
+    url: "/images/background/bg-1.jpg",
+    description: "雨天里，为小猫撑起一把伞",
     category: "understanding",
     gridColumn: 1,
     gridRow: 1,
   },
   {
     id: "bg-2",
-    url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop&q=80",
-    description: "理解你的内心需求和情感表达方式",
+    url: "/images/background/bg-2.jpg",
+    description: "在咖啡厅角落，静静地阅读",
     category: "understanding",
     gridColumn: 2,
     gridRow: 1,
   },
   {
     id: "bg-3",
-    url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop&q=80",
-    description: "基于 Big Five 人格理论和依恋理论进行科学匹配",
+    url: "/images/background/bg-3.jpg",
+    description: "深夜里，对着数据图表发呆",
     category: "understanding",
     gridColumn: 3,
     gridRow: 1,
@@ -46,24 +46,24 @@ export const backgroundImages: BackgroundImage[] = [
   // 具象化 (Visualization) - Row 2
   {
     id: "bg-4",
-    url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop&q=80",
-    description: "AI 将抽象的人格特质转化为像素艺术风格的视觉形象",
+    url: "/images/background/bg-4.jpg",
+    description: "日落时分，站在站台眺望城市",
     category: "visualization",
     gridColumn: 1,
     gridRow: 2,
   },
   {
-    id: "bg-5",
-    url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=600&fit=crop&q=80",
-    description: "从数据分析到可视化呈现，让匹配结果具象化",
-    category: "visualization",
+    id: "bg-8",
+    url: "/images/background/bg-8.jpg",
+    description: "她喜欢玩游戏，经常开黑到很晚",
+    category: "resonance",
     gridColumn: 2,
     gridRow: 2,
   },
   {
     id: "bg-6",
-    url: "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=800&h=600&fit=crop&q=80",
-    description: "生成多场景故事画面，展现真实的生活片段",
+    url: "/images/background/bg-6.jpg",
+    description: "樱花飞舞的公园里，漫步前行",
     category: "visualization",
     gridColumn: 3,
     gridRow: 2,
@@ -72,24 +72,24 @@ export const backgroundImages: BackgroundImage[] = [
   // 真实共鸣 (Resonance) - Row 3
   {
     id: "bg-7",
-    url: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=600&fit=crop&q=80",
-    description: "不是理想化的完美，而是真实的、有温度的情感连接",
+    url: "/images/background/bg-7.jpg",
+    description: "周末总会去球场，打篮球是他最放松的时刻",
     category: "resonance",
     gridColumn: 1,
     gridRow: 3,
   },
   {
-    id: "bg-8",
-    url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=600&fit=crop&q=80",
-    description: "与你产生真实的共鸣，理解你的情感需求",
-    category: "resonance",
+    id: "bg-5",
+    url: "/images/background/bg-5.jpg",
+    description: "在书店里，静静地阅读",
+    category: "visualization",
     gridColumn: 2,
     gridRow: 3,
   },
   {
     id: "bg-9",
-    url: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&h=600&fit=crop&q=80",
-    description: "一个有缺点但真实可爱的伴侣，与你完美互补",
+    url: "/images/background/bg-9.jpg",
+    description: "清晨的厨房里，准备早餐",
     category: "resonance",
     gridColumn: 3,
     gridRow: 3,

@@ -71,13 +71,13 @@ export async function POST(request: NextRequest) {
 
     // Generate images with different scenes
     const images: string[] = [];
-    let usedModel = "pollinations-flux-anime";
+    let usedModel = "pollinations-flux";
 
     try {
       // Primary: Pollinations AI (free, no API key required)
       // Generate each image with a different scene
       console.log("🎨 Attempting Pollinations AI generation (Pixel Art + Anime Style)...");
-      console.log("Model: flux-anime");
+      console.log("Model: flux");
       console.log("Dimensions:", `${dimensions.width}x${dimensions.height}`);
       console.log("Count:", count);
       console.log("Style: Pixel Art + Anime + Story Scenes");
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
           {
             width: dimensions.width,
             height: dimensions.height,
-            model: "turbo", // Use turbo model (faster and more reliable than flux)
+            model: "flux", // Use flux model
             nologo: true,
             enhance: false, // Disable enhance to reduce URL length
             seed: Date.now() + i, // Different seed for each image

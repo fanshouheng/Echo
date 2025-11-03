@@ -41,17 +41,15 @@ export default function HomePage() {
             onTouchStart={() => setHoveredImage(hoveredImage === image.id ? null : image.id)}
           >
             {/* Background Image */}
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+            <img
+              src={image.url}
+              alt={image.description}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500"
               style={{
-                backgroundImage: `url(${image.url})`,
-                opacity: hoveredImage === null || hoveredImage === image.id ? 0.7 : 0.3,
                 transform: hoveredImage === image.id ? "scale(1.05)" : "scale(1)",
+                opacity: hoveredImage && hoveredImage !== image.id ? 0.4 : 1,
               }}
             />
-            
-            {/* Default overlay */}
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300" />
 
             {/* Description on hover */}
             <AnimatePresence>
@@ -78,7 +76,7 @@ export default function HomePage() {
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
-        className="container mx-auto px-4 text-center space-y-12 relative z-10"
+        className="container mx-auto px-4 text-center space-y-10 relative z-10 -mt-8 md:-mt-12 lg:-mt-16"
       >
         {/* Content wrapper - no background, just text overlay */}
         <div className="relative space-y-12">
@@ -88,11 +86,11 @@ export default function HomePage() {
           </motion.div>
 
           {/* Title */}
-          <motion.div variants={fadeInUp} className="space-y-4">
+          <motion.div variants={fadeInUp} className="space-y-5">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold drop-shadow-lg">
               <span className="text-foreground">Echo</span>
             </h1>
-            <h2 className="text-2xl md:text-3xl font-medium text-muted-foreground drop-shadow-md">
+            <h2 className="text-3xl md:text-4xl font-medium text-muted-foreground drop-shadow-md">
               AI灵魂共鸣体生成器
             </h2>
           </motion.div>
@@ -100,7 +98,7 @@ export default function HomePage() {
           {/* Tagline */}
           <motion.p
             variants={fadeInUp}
-            className="text-xl md:text-2xl text-foreground max-w-2xl mx-auto leading-relaxed drop-shadow-md"
+            className="text-2xl md:text-3xl text-foreground max-w-2xl mx-auto leading-relaxed drop-shadow-md"
           >
             用访谈，生成你的理想伴侣
           </motion.p>
@@ -108,7 +106,7 @@ export default function HomePage() {
           {/* Description */}
           <motion.p
             variants={fadeInUp}
-            className="text-lg text-muted-foreground max-w-xl mx-auto drop-shadow-sm"
+            className="text-xl md:text-2xl text-muted-foreground max-w-xl mx-auto drop-shadow-md"
           >
             通过 10 分钟深度访谈，基于心理学理论创造一个与你完美匹配的伴侣人格
           </motion.p>
@@ -118,7 +116,7 @@ export default function HomePage() {
             <Button
               size="lg"
               onClick={handleStart}
-              className="text-lg px-8 py-6 h-auto rounded-full bg-primary hover:bg-primary/90 transition-opacity shadow-lg shadow-primary/30 border-2 border-primary"
+              className="text-lg px-9 py-5 h-auto rounded-full border border-primary text-primary bg-transparent hover:bg-primary/10 hover:text-primary transition-all shadow-lg shadow-primary/20 backdrop-blur-sm"
             >
               <Sparkles className="w-5 h-5 mr-2" />
               开始探索
@@ -128,7 +126,7 @@ export default function HomePage() {
           {/* Quote */}
           <motion.blockquote
             variants={fadeIn}
-            className="text-base md:text-lg italic text-muted-foreground border-l-4 border-primary pl-4 max-w-2xl mx-auto text-left drop-shadow-sm"
+            className="text-lg md:text-xl italic text-muted-foreground border-l-4 border-primary pl-4 max-w-2xl mx-auto text-left drop-shadow-md"
           >
             "Echo，不是回荡的声音，而是你心中理想伴侣的回应。"
           </motion.blockquote>
