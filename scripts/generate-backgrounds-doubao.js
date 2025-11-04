@@ -3,63 +3,25 @@
  * Generate all 9 background images
  */
 
+require('tsx/register');
+
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const http = require('http');
 
+const { backgroundImagePrompts } = require('../src/data/background-image-prompts.ts');
+
 const DOUBAO_API_KEY = "d4ece488-75bc-4ab7-945e-812dce2c492c";
 const DOUBAO_ENDPOINT_ID = "ep-20251103133548-j5md8";
 const DOUBAO_API_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3";
 
-// 导入提示词（从data文件或直接定义）
-const prompts = [
-  {
-    id: "bg-1",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，柔和自然光。傍晚的小雨街道，女孩蹲下撑透明雨伞为一只小猫挡雨，路面倒影清晰，街边日式房屋与暖光灯笼，细致笔触，真实氛围。",
-  },
-  {
-    id: "bg-2",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，午后咖啡馆。女孩坐在靠窗沙发读书，木质桌面放着拿铁和植物，窗外柔和光线洒入，色调温暖，氛围安静。",
-  },
-  {
-    id: "bg-3",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，夜晚的都市公寓。青年坐在工作桌前，多个屏幕显示数据图表和色彩丰富的分析界面，窗外是城市夜景，室内灯光柔和。",
-  },
-  {
-    id: "bg-4",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，日落的地铁站月台。长发女孩穿外套望向远方的城市天际线，天空呈现橙紫渐变，站台灯光渐亮，气氛充满期待。",
-  },
-  {
-    id: "bg-5",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，暖色调的独立书店。女孩坐在靠窗的高背木椅上读书，桌上放着咖啡与手帐，周围是排列整齐的旧书和绿色植物，暖黄吊灯营造柔和光线。",
-  },
-  {
-    id: "bg-6",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，春天的公园。女孩穿着浅色连衣裙在樱花树下漫步，花瓣飘落，背景是草地与远处建筑，光线柔和，色彩清新。",
-  },
-  {
-    id: "bg-7",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，夏日户外篮球场。男生穿球衣在阳光下运球训练，背景有绿色树木和球场围栏，动作自然，汗光微亮。",
-  },
-  {
-    id: "bg-8",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，夜晚的电竞房。女孩坐在专业电竞椅前，屏幕色彩丰富，桌面有键盘手柄与喝了一半的饮料，灯光营造紫蓝渐变。",
-  },
-  {
-    id: "bg-9",
-    artStyle: "写实插画风格",
-    prompt: "写实插画，16:9 横版，清晨的家庭厨房。男生围着围裙煎蛋，阳光从窗户洒进来，台面摆着新鲜蔬果和早餐，色调温暖真实。",
-  },
-];
+// 从数据文件提取提示词，保持脚本与前端一致
+const prompts = backgroundImagePrompts.map((item) => ({
+  id: item.id.replace('bg-prompt-', 'bg-'),
+  artStyle: item.artStyle,
+  prompt: item.prompt,
+}));
 
 const CONFIG = {
   width: 1920,

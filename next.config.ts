@@ -17,6 +17,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'ark-content-generation-v2-cn-beijing.tos-cn-beijing.volces.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     // Increase timeout for slow image generation services
     minimumCacheTTL: 60,

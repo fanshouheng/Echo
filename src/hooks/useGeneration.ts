@@ -15,9 +15,11 @@ interface GeneratePersonalityResponse {
   generationTime: number;
 }
 
+type ImageModel = "doubao" | "pollinations-flux" | "gemini-imagen" | "replicate-flux" | "replicate-sdxl";
+
 interface GenerateImageResponse {
   images: string[];
-  usedModel: "flux" | "sdxl";
+  usedModel: ImageModel;
   generationTime: number;
 }
 
@@ -29,7 +31,7 @@ export function useGeneratePersonality() {
   const [error, setError] = useState<string | null>(null);
 
   const { answers } = useInterviewStore();
-  const { setPersonality, setStatus, setError: setStoreError } = useGenerationStore();
+  const { setPersonality, setStatus, setError: setStoreError, preferredGender } = useGenerationStore();
 
   const generate = useCallback(async () => {
     console.log("📝 useGeneratePersonality: Starting generation...");
@@ -58,9 +60,14 @@ export function useGeneratePersonality() {
       console.log("🔧 Axios config: 超时时间设置为 600 秒（10分钟），允许长时间生成");
       console.log("💡 提示：生成可能需要较长时间，请耐心等待...");
       
+      const personalityPayload: any = { answers };
+      if (preferredGender) {
+        personalityPayload.preferredGender = preferredGender;
+      }
+
       const response = await axios.post<GeneratePersonalityResponse>(
         "/api/generate-partner",
-        { answers },
+        personalityPayload,
         axiosConfig
       );
 
@@ -129,10 +136,18 @@ export function useGenerateImages() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { personality: storePersonality, partner: storePartner, setImages, setStatus, setError: setStoreError } = useGenerationStore();
+  const {
+    personality: storePersonality,
+    partner: storePartner,
+    setImages,
+    appendImages,
+    setStatus,
+    setError: setStoreError,
+    preferredGender,
+  } = useGenerationStore();
 
   const generate = useCallback(
-    async (count: number = 3, aspectRatio: string = "9:16", customPersonality?: PersonalityProfile | PartnerPersonalityProfile) => {
+    async (count: number = 1, aspectRatio: string = "9:16", customPersonality?: PersonalityProfile | PartnerPersonalityProfile) => {
       // Priority: custom > partner > legacy personality
       let personalityData: PersonalityProfile | PartnerPersonalityProfile | null = null;
       
@@ -150,6 +165,11 @@ export function useGenerateImages() {
       
       if (!personalityData) {
         throw new Error("需要先生成人格");
+      }
+
+      const inferredGender = preferredGender || ('corePersonality' in personalityData ? personalityData.gender : undefined);
+      if (!inferredGender) {
+        throw new Error("请先选择人物性别后再生成形象");
       }
 
       setIsLoading(true);
@@ -173,19 +193,33 @@ export function useGenerateImages() {
         }
 
         // Send both legacy personality (for schema validation) and partner data (for enhanced prompts)
+        const requestPayload: any = { 
+          personality: apiPersonality,
+          count,
+          aspectRatio,
+        };
+
+        if (partnerData) {
+          requestPayload.partner = partnerData;
+        }
+
+        if (inferredGender) {
+          requestPayload.preferredGender = inferredGender;
+        }
+
         const response = await axios.post<GenerateImageResponse>(
           "/api/generate-image",
-          { 
-            personality: apiPersonality, // Required for schema validation
-            partner: partnerData, // Optional, for enhanced prompt generation
-            count, 
-            aspectRatio 
-          },
+          requestPayload,
           { timeout: 60000 }
         );
 
         const { images, usedModel } = response.data;
-        setImages(images, usedModel);
+        const currentImages = useGenerationStore.getState().images;
+        if (currentImages.length > 0) {
+          appendImages(images, usedModel);
+        } else {
+          setImages(images, usedModel);
+        }
         
         return images;
       } catch (err) {
@@ -200,7 +234,7 @@ export function useGenerateImages() {
         setIsLoading(false);
       }
     },
-    [storePersonality, setImages, setStatus, setStoreError]
+    [storePersonality, setImages, appendImages, setStatus, setStoreError]
   );
 
   return { generate, isLoading, error };

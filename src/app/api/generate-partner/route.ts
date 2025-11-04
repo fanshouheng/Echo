@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     
     // Parse request body
     const body: PartnerGenerationRequest = await request.json();
-    const { answers } = body;
+    const { answers, preferredGender } = body;
 
     if (!answers || !Array.isArray(answers) || answers.length === 0) {
       return NextResponse.json(
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     }));
 
     // Build partner generation prompt
-    const userPrompt = buildPartnerGenerationPrompt(interviewAnswers);
+    const userPrompt = buildPartnerGenerationPrompt(interviewAnswers, preferredGender);
     console.log("📋 Partner generation prompt built");
 
     // Try DeepSeek first, then OpenAI as fallback

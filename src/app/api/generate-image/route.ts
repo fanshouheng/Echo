@@ -6,13 +6,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateImageWithFlux, generateImageWithSDXL } from "@/lib/api/replicate";
 import { generateImageWithImagen, isGeminiConfigured } from "@/lib/api/gemini";
-import { generateImageWithPollinations, generateMultipleImagesWithPollinations } from "@/lib/api/pollinations";
+import { generateImageWithPollinations } from "@/lib/api/pollinations";
+import { generateImageWithDoubao, isDoubaoConfigured } from "@/lib/api/doubao";
 import { handleAPIError, AppError, ErrorCode } from "@/lib/api/error-handler";
 import { generateImageRequestSchema } from "@/lib/validators/schemas";
 import {
   buildFluxPrompt,
   buildSDXLPrompt,
   buildPollinationsPrompt,
+  buildDoubaoPrompt,
   negativePrompt,
   getImageDimensions,
 } from "@/lib/prompts/image";
@@ -42,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { personality, aspectRatio = "9:16", count = 1 } = validationResult.data;
+    const { personality, aspectRatio = "9:16", count = 1, preferredGender } = validationResult.data;
     console.log("Personality:", personality.name);
     
     // Use partner data if available for better prompt generation, otherwise use legacy personality
@@ -71,108 +73,145 @@ export async function POST(request: NextRequest) {
 
     // Generate images with different scenes
     const images: string[] = [];
-    let usedModel = "pollinations-flux";
+    let usedModel: "doubao" | "pollinations-flux" | "gemini-imagen" | "replicate-flux" | "replicate-sdxl" = "doubao";
+    const doubaoConfigured = isDoubaoConfigured();
+    console.log(`Doubao configured: ${doubaoConfigured}`);
 
     try {
-      // Primary: Pollinations AI (free, no API key required)
-      // Generate each image with a different scene
-      console.log("🎨 Attempting Pollinations AI generation (Pixel Art + Anime Style)...");
-      console.log("Model: flux");
+      if (!doubaoConfigured) {
+        throw new Error("豆包AI接口未配置");
+      }
+
+      console.log("🎨 Attempting Doubao AI generation (Realistic Illustration)...");
       console.log("Dimensions:", `${dimensions.width}x${dimensions.height}`);
       console.log("Count:", count);
-      console.log("Style: Pixel Art + Anime + Story Scenes");
-      
-      // Generate images one by one with different scene prompts
+      console.log("Aspect Ratio:", aspectRatio);
+
       for (let i = 0; i < count; i++) {
-        const scenePrompt = buildPollinationsPrompt(promptPersonality, i);
-        console.log(`📝 Scene ${i + 1} prompt:`, scenePrompt.substring(0, 150) + "...");
-        
-        const sceneImage = await generateImageWithPollinations(
-          scenePrompt,
-          {
-            width: dimensions.width,
-            height: dimensions.height,
-            model: "flux", // Use flux model
-            nologo: true,
-            enhance: false, // Disable enhance to reduce URL length
-            seed: Date.now() + i, // Different seed for each image
-          }
-        );
-        
-        images.push(...sceneImage);
-        console.log(`✅ Scene ${i + 1} generated successfully`);
-      }
-      
-      console.log(`✅ Pollinations generated ${images.length} images successfully`);
-      
-    } catch (pollinationsError: any) {
-      console.error("❌ Pollinations generation failed:");
-      console.error("Error message:", pollinationsError?.message);
-      console.warn("⚠️ Falling back to Gemini Imagen...");
+        const scenePrompt = buildDoubaoPrompt(promptPersonality, i, aspectRatio, preferredGender);
+        console.log(`📝 Doubao Scene ${i + 1} prompt:`, scenePrompt);
 
-      // Fallback 1: Gemini Imagen
-      try {
-        if (isGeminiConfigured()) {
-          console.log("🎨 Attempting Gemini Imagen 4 generation...");
-          const generatedImages = await generateImageWithImagen(fluxPrompt, {
-            negativePrompt,
-            aspectRatio,
-            numberOfImages: count,
-            model: "imagen-4.0-standard-generate-001",
-          });
-          console.log(`✅ Gemini Imagen generated ${generatedImages.length} images successfully`);
-          images.push(...generatedImages);
-          usedModel = "gemini-imagen";
-        } else {
-          throw new Error("Gemini API not configured");
+        const sceneImages = await generateImageWithDoubao(scenePrompt, {
+          width: dimensions.width,
+          height: dimensions.height,
+          aspectRatio,
+          watermark: false,
+        });
+
+        if (!sceneImages?.length) {
+          throw new Error("豆包AI未返回图片");
         }
-      } catch (imagenError: any) {
-        console.error("❌ Gemini Imagen generation failed:", imagenError?.message);
-        console.warn("⚠️ Falling back to Replicate Flux...");
 
-        // Fallback 2: Replicate Flux
+        images.push(sceneImages[0]);
+        console.log(`✅ Doubao Scene ${i + 1} generated successfully`);
+      }
+
+      console.log(`✅ Doubao generated ${images.length} images successfully`);
+
+    } catch (doubaoError: any) {
+      console.error("❌ Doubao generation failed:");
+      console.error("Error message:", doubaoError?.message || doubaoError);
+      console.warn("⚠️ Falling back to Pollinations / Gemini / Replicate pipeline...");
+
+      images.length = 0;
+      usedModel = "pollinations-flux";
+
+      try {
+        console.log("🎨 Attempting Pollinations AI generation (Pixel Art + Anime Style)...");
+        console.log("Model: flux");
+        console.log("Dimensions:", `${dimensions.width}x${dimensions.height}`);
+        console.log("Count:", count);
+        console.log("Style: Pixel Art + Anime + Story Scenes");
+
+        for (let i = 0; i < count; i++) {
+          const scenePrompt = buildPollinationsPrompt(promptPersonality, i, preferredGender);
+          console.log(`📝 Scene ${i + 1} prompt:`, scenePrompt.substring(0, 150) + "...");
+
+          const sceneImage = await generateImageWithPollinations(
+            scenePrompt,
+            {
+              width: dimensions.width,
+              height: dimensions.height,
+              model: "flux",
+              nologo: true,
+              enhance: false,
+              seed: Date.now() + i,
+            }
+          );
+
+          images.push(...sceneImage);
+          console.log(`✅ Scene ${i + 1} generated successfully`);
+        }
+
+        console.log(`✅ Pollinations generated ${images.length} images successfully`);
+
+      } catch (pollinationsError: any) {
+        console.error("❌ Pollinations generation failed:");
+        console.error("Error message:", pollinationsError?.message);
+        console.warn("⚠️ Falling back to Gemini Imagen...");
+
+        // Fallback 1: Gemini Imagen
         try {
-          usedModel = "replicate-flux";
-          console.log("Attempting Replicate Flux generation...");
-          for (let i = 0; i < count; i++) {
-            const generatedImages = await generateImageWithFlux(
-              fluxPrompt,
-              {
-                aspectRatio: aspectRatio, // Use aspectRatio string (e.g., "9:16")
-                numOutputs: 1, // Generate one image per iteration
-              }
-            );
-            // generateImageWithFlux returns array, take first image
-            images.push(generatedImages[0]);
+          if (isGeminiConfigured()) {
+            console.log("🎨 Attempting Gemini Imagen 4 generation...");
+            const generatedImages = await generateImageWithImagen(fluxPrompt, {
+              negativePrompt,
+              aspectRatio,
+              numberOfImages: count,
+              model: "imagen-4.0-standard-generate-001",
+            });
+            console.log(`✅ Gemini Imagen generated ${generatedImages.length} images successfully`);
+            images.push(...generatedImages);
+            usedModel = "gemini-imagen";
+          } else {
+            throw new Error("Gemini API not configured");
           }
-          console.log(`✅ Replicate Flux generated ${images.length} images successfully`);
-        } catch (fluxError) {
-          console.warn("Replicate Flux generation failed, falling back to SDXL:", fluxError);
+        } catch (imagenError: any) {
+          console.error("❌ Gemini Imagen generation failed:", imagenError?.message);
+          console.warn("⚠️ Falling back to Replicate Flux...");
 
-          // Fallback 3: Replicate SDXL (final fallback)
+          // Fallback 2: Replicate Flux
           try {
-            usedModel = "replicate-sdxl";
-            console.log("Attempting Replicate SDXL generation...");
+            usedModel = "replicate-flux";
+            console.log("Attempting Replicate Flux generation...");
             for (let i = 0; i < count; i++) {
-              const generatedImages = await generateImageWithSDXL(
-                sdxlPrompt,
+              const generatedImages = await generateImageWithFlux(
+                fluxPrompt,
                 {
-                  width: dimensions.width,
-                  height: dimensions.height,
-                  numOutputs: 1, // Generate one image per iteration
+                  aspectRatio: aspectRatio,
+                  numOutputs: 1,
                 }
               );
-              // generateImageWithSDXL returns array, take first image
               images.push(generatedImages[0]);
             }
-            console.log(`✅ Replicate SDXL generated ${images.length} images successfully`);
-          } catch (sdxlError) {
-            console.error("All image generation methods failed:", sdxlError);
-            throw new AppError(
-              ErrorCode.GENERATION_FAILED,
-              "图像生成失败，所有服务均不可用",
-              sdxlError instanceof Error ? sdxlError : new Error(String(sdxlError))
-            );
+            console.log(`✅ Replicate Flux generated ${images.length} images successfully`);
+          } catch (fluxError) {
+            console.warn("Replicate Flux generation failed, falling back to SDXL:", fluxError);
+
+            // Fallback 3: Replicate SDXL (final fallback)
+            try {
+              usedModel = "replicate-sdxl";
+              console.log("Attempting Replicate SDXL generation...");
+              for (let i = 0; i < count; i++) {
+                const generatedImages = await generateImageWithSDXL(
+                  sdxlPrompt,
+                  {
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    numOutputs: 1,
+                  }
+                );
+                images.push(generatedImages[0]);
+              }
+              console.log(`✅ Replicate SDXL generated ${images.length} images successfully`);
+            } catch (sdxlError) {
+              console.error("All image generation methods failed:", sdxlError);
+              throw new AppError(
+                ErrorCode.GENERATION_FAILED,
+                "图像生成失败，所有服务均不可用",
+                sdxlError instanceof Error ? sdxlError : new Error(String(sdxlError))
+              );
+            }
           }
         }
       }

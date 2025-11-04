@@ -53,7 +53,8 @@ export const generatePersonalityResponseSchema = z.object({
 export const generateImageRequestSchema = z.object({
   personality: personalityProfileSchema,
   aspectRatio: z.enum(["1:1", "3:4", "4:3", "9:16", "16:9"]).default("9:16"),
-  count: z.number().min(1).max(4).default(3),
+  count: z.number().min(1).max(1).default(1),
+  preferredGender: z.enum(["male", "female"]).optional(),
 });
 
 // Keep old name for backwards compatibility

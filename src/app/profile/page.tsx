@@ -15,13 +15,15 @@ import { TraitDetails } from "@/components/profile/TraitDetails";
 import { LifeScenesCard } from "@/components/profile/LifeScenesCard";
 import { ShareDialog } from "@/components/share/ShareDialog";
 import { Button } from "@/components/ui/button";
-import { Share2, RefreshCw, Download } from "lucide-react";
+import { Share2, Download, Wand2 } from "lucide-react";
 import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
+import { useGenerateImages } from "@/hooks/useGeneration";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { personality, partner, images, hasPersonality, hasImages, getSelectedImage } =
     useGenerationStore();
+  const { generate: generateImages, isLoading: isGeneratingImages } = useGenerateImages();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -56,14 +58,18 @@ export default function ProfilePage() {
     }
   };
 
-  const handleRegenerate = () => {
-    // TODO: Implement regeneration (Phase 8)
-    router.push("/regenerate");
-  };
-
   const handleDownload = () => {
     if (selectedImage) {
       window.open(selectedImage, "_blank");
+    }
+  };
+
+  const handleGenerateNewScene = async () => {
+    try {
+      await generateImages(1, "9:16");
+    } catch (error) {
+      console.error("Generate new scene failed:", error);
+      alert("生成失败，请稍后重试");
     }
   };
 
@@ -81,9 +87,6 @@ export default function ProfilePage() {
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleShare}>
               <Share2 className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleRegenerate}>
-              <RefreshCw className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -122,19 +125,28 @@ export default function ProfilePage() {
 
           {/* Image Gallery */}
           {hasImages() && images.length > 0 && (
-            <motion.section variants={fadeInUp}>
+            <motion.section variants={fadeInUp} className="space-y-6">
               <ImageGallery images={images} />
-            </motion.section>
-          )}
 
-          {/* Download Button */}
-          {selectedImage && (
-            <motion.div variants={fadeInUp} className="flex justify-center">
-              <Button size="lg" onClick={handleDownload} className="gap-2">
-                <Download className="w-4 h-4" />
-                下载形象
-              </Button>
-            </motion.div>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={handleGenerateNewScene}
+                  className="gap-2"
+                  disabled={isGeneratingImages}
+                >
+                  <Wand2 className="w-4 h-4" />
+                  {isGeneratingImages ? "生成中..." : "生成新场景"}
+                </Button>
+                {selectedImage && (
+                  <Button size="lg" onClick={handleDownload} className="gap-2">
+                    <Download className="w-4 h-4" />
+                    下载当前形象
+                  </Button>
+                )}
+              </div>
+            </motion.section>
           )}
 
           {/* Personality Details */}
@@ -159,10 +171,6 @@ export default function ProfilePage() {
             <Button size="lg" onClick={handleShare} className="gap-2">
               <Share2 className="w-4 h-4" />
               分享我的 Echo
-            </Button>
-            <Button size="lg" variant="outline" onClick={handleRegenerate} className="gap-2">
-              <RefreshCw className="w-4 h-4" />
-              重新生成
             </Button>
           </motion.section>
         </motion.div>

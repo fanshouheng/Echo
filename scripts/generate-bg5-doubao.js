@@ -3,19 +3,30 @@
  * Generate bg-5 (warm bookstore scene)
  */
 
+require('tsx/register');
+
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const http = require('http');
 
+const { backgroundImagePrompts } = require('../src/data/background-image-prompts.ts');
+
 const DOUBAO_API_KEY = "d4ece488-75bc-4ab7-945e-812dce2c492c";
 const DOUBAO_ENDPOINT_ID = "ep-20251103133548-j5md8";
 const DOUBAO_API_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3";
 
+const promptItem = backgroundImagePrompts.find((item) => item.id === 'bg-prompt-5');
+
+if (!promptItem) {
+  console.error('❌ 未找到 bg-prompt-5 对应的提示词');
+  process.exit(1);
+}
+
 const prompt = {
-  id: "bg-5",
-  artStyle: "写实插画风格",
-  prompt: "写实插画，16:9 横版，暖色调的独立书店。女孩坐在靠窗的高背木椅上读书，桌上放着咖啡与手帐，周围是排列整齐的旧书和绿色植物，暖黄吊灯营造柔和光线。",
+  id: 'bg-5',
+  artStyle: promptItem.artStyle,
+  prompt: promptItem.prompt,
 };
 
 const CONFIG = {

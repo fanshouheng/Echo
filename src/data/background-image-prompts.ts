@@ -25,28 +25,14 @@ export interface BackgroundImagePrompt {
 export const backgroundImagePrompts: BackgroundImagePrompt[] = [
   // === 深度理解 (Understanding) - Row 1 ===
   // 展示：单个生成的伴侣形象，通过心理学分析理解你的情感
-  
-pixelated, low resolution pixel art, blocky pixels, game sprite style, 
-young adult woman with black shoulder-length hair, wearing school uniform, 
-crouching down on rainy Japanese street, holding transparent umbrella over small tabby cat, 
-both looking at each other with gentle expressions, 
-rich vibrant colors, full body scene, rainy street with traditional Japanese buildings, 
-healing pixel art, NOT realistic, NOT photorealistic, NOT smooth, NOT detailed rendering, Soul app inspired`,
   {
     id: "bg-prompt-1",
     artStyle: "写实插画风格",
-    prompt: `写实插画，16:9 横版，柔和自然光。
-傍晚的小雨街道，女孩蹲下撑透明雨伞为一只小猫挡雨，路面倒影清晰，街边日式房屋与暖光灯笼，细致笔触，真实氛围。`,
+    prompt: `写实插画，16:9 横版，柔和自然光。傍晚的小雨街道，女孩蹲下撑透明雨伞为一只小猫挡雨，路面倒影清晰，街边日式房屋与暖光灯笼，细致笔触，真实氛围。`,
     category: "understanding",
     description: "通过心理学模型深度分析你的情感模式和依恋风格",
     gridPosition: { column: 1, row: 1 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult woman with medium-length hair, wearing casual clothes, 
-sitting alone in cozy cafe corner, reading book with thoughtful expression, 
-warm rich colors, full scene with cafe environment, colorful coffee cup, 
-NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app style`,
   {
     id: "bg-prompt-2",
     artStyle: "写实插画风格",
@@ -55,12 +41,6 @@ NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app style
     description: "理解你的内心需求和情感表达方式",
     gridPosition: { column: 2, row: 1 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult man with short neat hair, wearing modern casual clothes, 
-sitting in modern apartment by window, looking at screen showing personality data with focused expression, 
-rich colorful data visualization, vibrant apartment colors, full room scene, 
-NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspired`,
   {
     id: "bg-prompt-3",
     artStyle: "写实插画风格",
@@ -72,12 +52,6 @@ NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspi
 
   // === 具象化 (Visualization) - Row 2 ===
   // 展示：AI 生成的具象化伴侣形象，在不同真实生活场景中
-  
-pixelated, blocky pixels, game sprite style, 
-young adult woman with long hair, wearing jacket, standing on train platform during sunset, 
-watching city with gentle expression, character appearing from light particles, 
-vibrant sunset colors with orange pink purple sky, colorful city lights, full body view, 
-NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app aesthetic`,
   {
     id: "bg-prompt-4",
     artStyle: "写实插画风格",
@@ -86,11 +60,6 @@ NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app aesth
     description: "AI 将抽象的人格特质转化为视觉形象",
     gridPosition: { column: 1, row: 2 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult woman with medium-length hair, wearing cardigan, standing in cozy bookstore, 
-browsing books on shelf with gentle expression, rich colorful books, warm lighting, 
-full scene showing bookstore interior, NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspired`,
   {
     id: "bg-prompt-5",
     artStyle: "写实插画风格",
@@ -99,11 +68,6 @@ full scene showing bookstore interior, NOT realistic, NOT photorealistic, NOT sm
     description: "从数据分析到可视化呈现，让匹配结果具象化",
     gridPosition: { column: 2, row: 2 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult woman with flowing hair, wearing light dress, walking through peaceful garden park, 
-cherry blossoms falling, vibrant pink cherry blossoms, green grass and trees, 
-full body view in environment, NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app style`,
   {
     id: "bg-prompt-6",
     artStyle: "写实插画风格",
@@ -115,11 +79,6 @@ full body view in environment, NOT realistic, NOT photorealistic, NOT smooth, he
 
   // === 真实共鸣 (Resonance) - Row 3 ===
   // 展示：单个生成的伴侣形象，在真实情感场景中展现共鸣
-  
-pixelated, blocky pixels, game sprite style, 
-young adult man with short hair, wearing athletic wear, playing basketball on outdoor court, 
-dribbling ball with focused expression, vibrant outdoor colors, basketball court environment, 
-full body action scene, NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspired`,
   {
     id: "bg-prompt-7",
     artStyle: "写实插画风格",
@@ -128,11 +87,6 @@ full body action scene, NOT realistic, NOT photorealistic, NOT smooth, healing p
     description: "不是理想化的完美，而是真实的、有温度的情感连接",
     gridPosition: { column: 1, row: 3 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult woman with neat hair, wearing short casual home dress, sitting at gaming setup, 
-playing video games with focused expression, colorful gaming equipment and screens, cozy room environment, 
-full scene showing gaming setup, NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app aesthetic`,
   {
     id: "bg-prompt-8",
     artStyle: "写实插画风格",
@@ -141,12 +95,6 @@ full scene showing gaming setup, NOT realistic, NOT photorealistic, NOT smooth, 
     description: "与你产生真实的共鸣，理解你的情感需求",
     gridPosition: { column: 2, row: 3 },
   },
-  
-pixelated, blocky pixels, game sprite style, 
-young adult man with slightly messy hair, wearing apron over casual clothes, 
-standing in cozy home kitchen during morning, cooking breakfast with gentle expression, 
-warm kitchen colors, colorful ingredients, bright morning light, full body view, 
-NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspired`,
   {
     id: "bg-prompt-9",
     artStyle: "写实插画风格",
@@ -163,39 +111,16 @@ NOT realistic, NOT photorealistic, NOT smooth, healing pixel art, Soul app inspi
  * Key elements (art style, character, monochrome, cyan) are preserved
  */
 export const backgroundImagePromptsShort: BackgroundImagePrompt[] = backgroundImagePrompts.map((prompt) => {
-  const normalized = prompt.prompt
-    .replace(/\s+/g, ' ') // Normalize whitespace
-    .replace(/,\s+/g, ', ') // Normalize commas
-    .trim();
-  
-  // Extract key style name from artStyle
-  const styleKeywords = prompt.artStyle.toLowerCase().match(/(akira|90s|cyberpunk|makoto shinkai|pixel|ukiyo-e|shonen|shojo|80s)/i) || [];
-  const styleName = styleKeywords[0] || prompt.artStyle.split(' ')[0].toLowerCase();
-  
-  // Build simplified prompt with key elements
-  let shortPrompt = normalized;
-  
-  if (shortPrompt.length > 200) {
-    // Prioritize: style name, character description, scene, color
-    const keyParts = [
-      prompt.artStyle.split(' ')[0], // Style name
-      normalized.match(/(young adult character|character)/i)?.[0] || 'character',
-      normalized.match(/(monochrome|black white gray)/i)?.[0] || 'monochrome',
-      normalized.match(/(cyan)/i)?.[0] || 'cyan accent',
-      'Soul app style'
-    ].filter(Boolean).join(', ');
-    
-    // Keep first 120 chars of original, then add key parts
-    const firstPart = normalized.substring(0, 120);
-    const lastComma = firstPart.lastIndexOf(',');
-    shortPrompt = lastComma > 0 
-      ? firstPart.substring(0, lastComma) + ', ' + keyParts
-      : firstPart + ', ' + keyParts;
-  }
-  
+  const normalized = prompt.prompt.replace(/\s+/g, ' ').trim();
+  const firstSentence = normalized.split(/[。.!?？]/)[0] || normalized;
+  const shortPromptBase = `${prompt.artStyle}，${firstSentence}`;
+  const shortPrompt = shortPromptBase.length > 220
+    ? shortPromptBase.substring(0, 217) + '…'
+    : shortPromptBase;
+
   return {
     ...prompt,
-    prompt: shortPrompt.substring(0, 250), // Increased limit slightly for style names
+    prompt: shortPrompt,
   };
 });
 

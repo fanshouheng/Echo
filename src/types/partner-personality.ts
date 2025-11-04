@@ -13,6 +13,19 @@ export interface PartnerPersonalityProfile {
   age: string;
   vibe: string;
   tagline: string;
+  gender?: "male" | "female";
+  visualProfile?: {
+    apparentAge: string;
+    occupation?: string;
+    primaryScene?: string;
+    secondaryScene?: string;
+    additionalScenes?: string[];
+    outfit?: string;
+    accessories?: string[];
+    timeOfDay?: string;
+    lighting?: string;
+    moodKeywords?: string[];
+  };
   
   // Core Personality
   corePersonality: {
@@ -133,6 +146,7 @@ export interface PartnerGenerationRequest {
     questionId: string;
     answer: string | string[];
   }>;
+  preferredGender?: "male" | "female";
 }
 
 /**
@@ -219,6 +233,8 @@ export function validatePartnerProfile(profile: any): profile is PartnerPersonal
     typeof profile.relationshipDynamics === "object" &&
     typeof profile.whyPerfectMatch === "object" &&
     typeof profile.loveLanguage === "object" &&
+    (profile.visualProfile === undefined || typeof profile.visualProfile === "object") &&
+    (profile.gender === undefined || profile.gender === "male" || profile.gender === "female") &&
     // New fields (optional for backward compatibility, but should be present)
     (profile.dailyLifeScenes === undefined || typeof profile.dailyLifeScenes === "object") &&
     (profile.interactionDetails === undefined || typeof profile.interactionDetails === "object") &&

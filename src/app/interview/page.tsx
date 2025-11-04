@@ -13,6 +13,8 @@ import { QuestionCard } from "@/components/interview/QuestionCard";
 import { ProgressBar } from "@/components/interview/ProgressBar";
 import { NavigationButtons } from "@/components/interview/NavigationButtons";
 import { fadeIn } from "@/lib/animations";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 
 export default function InterviewPage() {
   const router = useRouter();
@@ -98,9 +100,8 @@ export default function InterviewPage() {
   // Handle next button
   const handleNext = () => {
     if (isLastQuestion()) {
-      // Complete interview and navigate to generation page
       completeInterview();
-      router.push("/generate");
+      router.push("/profile");
     } else {
       nextQuestion();
     }
@@ -193,11 +194,21 @@ export default function InterviewPage() {
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="fixed bottom-0 left-0 right-0 p-4 text-center"
+        className="fixed bottom-0 left-0 right-0 p-4"
       >
-        <p className="text-sm text-muted-foreground">
-          请真诚回答，没有对错之分
-        </p>
+        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-background/80 backdrop-blur rounded-2xl border border-border/60 px-4 py-3 shadow-lg shadow-background/30">
+          <p className="text-sm text-muted-foreground">
+            请真诚回答，没有对错之分。完成后将自动进入 Echo 档案。
+          </p>
+          <Button
+            size="sm"
+            className="gap-2"
+            onClick={() => router.push("/profile")}
+          >
+            <Sparkles className="w-4 h-4" />
+            前往生成人格 & 形象
+          </Button>
+        </div>
       </motion.footer>
     </div>
   );

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
 import { EchoLogo } from "@/components/logo/EchoLogo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { backgroundImages } from "@/data/background-images";
 
 export default function HomePage() {
@@ -25,11 +24,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Theme Toggle - Top Right */}
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle size="md" />
-      </div>
-
       {/* Background Images Grid - 3×3 */}
       <div className="fixed inset-0 grid grid-cols-3 grid-rows-3 z-0">
         {backgroundImages.map((image) => (
@@ -81,24 +75,19 @@ export default function HomePage() {
         {/* Content wrapper - no background, just text overlay */}
         <div className="relative space-y-12">
           {/* Logo/Icon */}
-          <motion.div variants={fadeIn} className="flex justify-center">
-            <EchoLogo size="xl" variant="icon" animated={true} />
-          </motion.div>
-
-          {/* Title */}
-          <motion.div variants={fadeInUp} className="space-y-5">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold drop-shadow-lg">
-              <span className="text-foreground">Echo</span>
-            </h1>
-            <h2 className="text-3xl md:text-4xl font-medium text-muted-foreground drop-shadow-md">
-              AI灵魂共鸣体生成器
-            </h2>
+          <motion.div variants={fadeIn} className="space-y-4">
+            <EchoLogo
+              size="xl"
+              variant="text"
+              className="text-6xl sm:text-7xl md:text-8xl lg:text-8xl tracking-[0.35em] uppercase drop-shadow-[0_0_22px_rgba(255,255,255,0.35)]"
+            />
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground">AI Soul Resonance Generator</p>
           </motion.div>
 
           {/* Tagline */}
           <motion.p
             variants={fadeInUp}
-            className="text-2xl md:text-3xl text-foreground max-w-2xl mx-auto leading-relaxed drop-shadow-md"
+            className="text-xl md:text-2xl lg:text-3xl text-foreground max-w-2xl mx-auto leading-relaxed"
           >
             用访谈，生成你的理想伴侣
           </motion.p>
@@ -106,9 +95,9 @@ export default function HomePage() {
           {/* Description */}
           <motion.p
             variants={fadeInUp}
-            className="text-xl md:text-2xl text-muted-foreground max-w-xl mx-auto drop-shadow-md"
+            className="text-base md:text-lg lg:text-2xl text-muted-foreground max-w-xl mx-auto"
           >
-            通过 10 分钟深度访谈，基于心理学理论创造一个与你完美匹配的伴侣人格
+            10 分钟深度访谈，基于心理学模型创造一个与你真实契合的 Echo 档案与形象。
           </motion.p>
 
           {/* CTA Button */}
@@ -126,9 +115,9 @@ export default function HomePage() {
           {/* Quote */}
           <motion.blockquote
             variants={fadeIn}
-            className="text-lg md:text-xl italic text-muted-foreground border-l-4 border-primary pl-4 max-w-2xl mx-auto text-left drop-shadow-md"
+            className="text-lg md:text-xl lg:text-xl text-foreground/95 font-medium border-l-0 max-w-2xl mx-auto text-center tracking-wide drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]"
           >
-            "Echo，不是回荡的声音，而是你心中理想伴侣的回应。"
+            Echo，不是回荡的声音，而是你心中理想伴侣的回应。
           </motion.blockquote>
         </div>
       </motion.div>

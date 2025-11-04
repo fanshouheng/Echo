@@ -69,7 +69,7 @@ export const partnerGenerationSystemPrompt = `你是一位专业的关系心理�
 /**
  * Build partner generation prompt based on user answers
  */
-export function buildPartnerGenerationPrompt(answers: InterviewAnswer[]): string {
+export function buildPartnerGenerationPrompt(answers: InterviewAnswer[], preferredGender?: "male" | "female"): string {
   // Analyze user's attachment style
   const attachmentAnalysis = analyzeAttachmentStyle(answers);
   
@@ -147,21 +147,39 @@ ${preferencesAnalysis}
 
 **请基于以上分析，生成一个与用户高度匹配的理想伴侣人格档案。**
 
-**生成原则：**
+${preferredGender ? `**伴侣性别要求：** 只能生成一位${preferredGender === "female" ? "女性" : "男性"}角色，所有描述、称谓、外形设定必须与该性别一致。在 JSON 输出中新增字段 "gender": "${preferredGender}"。
+` : ""}**生成原则：**
 1. **满足情感需求**：伴侣的性格和行为模式要能满足用户的核心情感需求
 2. **依恋风格匹配**：根据用户的依恋风格，生成能提供相应支持的伴侣特质
 3. **互补性平衡**：在用户的弱项上提供互补，在核心价值观上保持相似
 4. **真实可信**：生成的伴侣要有真实的人格特征，不是完美的理想化形象
+5. **主角唯一**：所有生活场景描述中仅出现这一位伴侣作为核心人物，其他人若必须出现，必须是背景化、无具体描写的存在。
+
+图像生成辅助信息：在 JSON 最外层新增字段 visualProfile，用于描述人物在视觉呈现层面的细节，包括显性年龄、职业或身份、主要/备用场景、穿着与随身物件、时间与光线、氛围关键词等。该字段仅供后续图像生成使用，不会直接展示给用户，但必须与人格设定保持一致，语言具体简洁。显性年龄需保证 ≥16 岁，禁止出现儿童或幼儿特征。
+
+命名规则：name 字段请使用 Echo 开头的代号（例如 "Echo-01"、"Echo-Luna"），nickname 字段可使用 "Echo" 或同系列的简短代号，避免真实姓名或带有强烈地域文化暗示的名字。
 
 **输出 JSON 格式：**
 
 \`\`\`json
 {
-  "name": "林晚",
-  "nickname": "晚晚", 
+  "name": "Echo-01",
+  "nickname": "Echo", 
   "age": "26-30",
   "vibe": "温柔而坚定",
   "tagline": "用温柔的坚持，守护你的每一个脆弱瞬间",
+  "gender": "female",
+  "visualProfile": {
+    "apparentAge": "27-30 岁，气质清爽明亮",
+    "occupation": "城市独立插画师",
+    "primaryScene": "清晨的开放式厨房，阳光透过百叶窗洒在木质台面上",
+    "secondaryScene": "午后靠窗的工作桌，桌面铺着速写本与陶瓷马克杯",
+    "outfit": "浅色针织上衣搭配高腰牛仔裤，袖口随意卷起",
+    "accessories": ["陶瓷马克杯", "翻开的插画手稿"],
+    "timeOfDay": "清晨柔和自然光",
+    "lighting": "暖色散射光，柔化阴影",
+    "moodKeywords": ["松弛感", "温度", "真实生活感"]
+  },
   
   "corePersonality": {
     "attachmentStyle": "安全型依恋",
