@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useGenerationStore } from "@/store/generation";
+import { useInterviewStore } from "@/store/interview";
 import { PersonalityCard } from "@/components/profile/PersonalityCard";
 import { ImageGallery } from "@/components/profile/ImageGallery";
 import { TraitDetails } from "@/components/profile/TraitDetails";
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { personality, partner, images, hasPersonality, hasImages, getSelectedImage } =
     useGenerationStore();
+  const { completedAt } = useInterviewStore();
   const { generate: generateImages, isLoading: isGeneratingImages } = useGenerateImages();
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -35,9 +37,15 @@ export default function ProfilePage() {
   // Redirect if no personality
   useEffect(() => {
     if (isMounted && !hasPersonality()) {
-      router.push("/");
+      // If interview is completed but no personality, go to generate page
+      if (completedAt) {
+        router.push("/generate");
+      } else {
+        // Otherwise, go to interview page
+        router.push("/interview");
+      }
     }
-  }, [isMounted, hasPersonality, router]);
+  }, [isMounted, hasPersonality, completedAt, router]);
 
   // Show loading only after mount to avoid hydration mismatch
   if (!isMounted || !personality) {
