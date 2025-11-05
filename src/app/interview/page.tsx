@@ -101,7 +101,7 @@ export default function InterviewPage() {
   const handleNext = () => {
     if (isLastQuestion()) {
       completeInterview();
-      router.push("/generate");
+      router.push("/profile");
     } else {
       nextQuestion();
     }
