@@ -21,26 +21,6 @@ export function ThemeToggle({ className = "", size = "md" }: ThemeToggleProps) {
   const { theme, toggleTheme, mounted } = useTheme();
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return (
-      <Button
-        variant="ghost"
-        size={size}
-        className={`w-10 h-10 p-0 ${className}`}
-        disabled
-      >
-        <div className="w-5 h-5" />
-      </Button>
-    );
-  }
-
-  const handleToggle = () => {
-    setIsAnimating(true);
-    toggleTheme();
-    setTimeout(() => setIsAnimating(false), 300);
-  };
-
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
@@ -53,10 +33,28 @@ export function ThemeToggle({ className = "", size = "md" }: ThemeToggleProps) {
     lg: "w-6 h-6",
   };
 
+  // Prevent flash of wrong theme
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        className={`${sizeClasses[size]} p-0 ${className}`}
+        disabled
+      >
+        <div className={iconSizes[size]} />
+      </Button>
+    );
+  }
+
+  const handleToggle = () => {
+    setIsAnimating(true);
+    toggleTheme();
+    setTimeout(() => setIsAnimating(false), 300);
+  };
+
   return (
     <Button
       variant="ghost"
-      size={size}
       onClick={handleToggle}
       className={`${sizeClasses[size]} p-0 rounded-full hover:bg-muted transition-colors ${className}`}
       aria-label={`切换到${theme === "dark" ? "浅色" : "深色"}模式`}
