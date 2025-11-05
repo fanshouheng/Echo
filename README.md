@@ -1,6 +1,6 @@
 # Echo：AI灵魂共鸣体生成器
 
-> **"Echo，不是回荡的声音，而是你灵魂的回应。"**
+> **"Echo，不是回荡的声音，而是你心中理想伴侣的回应。"**
 
 ![Version](https://img.shields.io/badge/version-0.1.0--mvp-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
@@ -17,12 +17,19 @@
 
 **Echo 不是聊天机器人！**
 
-- ✅ 一次性深度体验（15-20分钟，25题专业问卷）
+- ✅ 一次性深度体验（10-15分钟，25题专业问卷）
 - ✅ 基于 Big Five 人格理论的科学分析
 - ✅ 输出可分享的数字艺术作品（文字+图像）
 - ✅ 帮助自我认知与情感探索
 - ✅ 文艺与生活气息并存的人格描述
 - ❌ 不提供持续对话功能
+
+**Echo 档案的唯一性：**
+
+- 🔒 每个 Echo 档案都是独一无二的，生成后永久保存，不可重置或覆盖
+- 🎨 初次生成的形象与人格档案同步完成，作为 Echo 的核心特征
+- 🖼️ 后续可在档案页生成新场景，仅在原有形象基础上更换环境与装扮
+- 💡 所有扩展都围绕首个 Echo 档案进行，确保核心的一致性与唯一性
 
 ---
 
@@ -32,8 +39,9 @@
 
 - Node.js 20.x 或更高版本
 - npm 或 pnpm
-- OpenAI API Key 或 Anthropic API Key
-- Replicate API Token
+- **DeepSeek API Key**（人格生成，必需）
+- **Doubao AI API Key**（图像生成，豆包AI，必需）
+- OpenAI API Key（备用，可选）
 
 ### 安装
 
@@ -49,8 +57,9 @@ npm install
 cp .env.local.example .env.local
 
 # 编辑 .env.local 添加你的 API keys
-# OPENAI_API_KEY=sk-...
-# REPLICATE_API_TOKEN=r8_...
+# DEEPSEEK_API_KEY=sk-...
+# DOUBAO_API_KEY=your-doubao-api-key
+# DOUBAO_ENDPOINT_ID=ep-xxxxx
 ```
 
 ### 开发
@@ -92,7 +101,7 @@ npm start
 
 **部署后成本：**
 - Vercel 托管：免费（Hobby 计划足够使用）
-- 每月生成 100 个 Echo 约需 ¥1.00（仅 DeepSeek API 费用）
+- 每月生成 100 个 Echo 约需 ¥1.00-2.00（DeepSeek API + Doubao AI 图像生成费用）
 
 ---
 
@@ -102,9 +111,10 @@ npm start
 echo/
 ├── src/
 │   ├── app/                        # Next.js App Router
-│   │   ├── interview/              # 访谈页面
-│   │   ├── generate/               # 生成页面
-│   │   ├── profile/[id]/           # Echo档案页面
+│   │   ├── interview/              # 灵魂访谈页面
+│   │   ├── generate/               # 生成流程页面（重定向入口）
+│   │   ├── profile/                # Echo档案展示页面
+│   │   ├── about/                  # 关于 Echo 说明页面
 │   │   └── api/                    # API路由
 │   ├── components/                 # React组件
 │   │   ├── ui/                     # shadcn/ui基础组件
@@ -210,7 +220,7 @@ Echo采用**Big Five人格理论**（五大人格特质模型），这是心理�
 - **AI:**
   - **DeepSeek Reasoner (思考模式)** 🧠 - 人格生成首选，启用推理能力提升生成质量
   - DeepSeek-Chat (备用) / OpenAI GPT-4o (备用)
-  - **Pollinations AI (图像生成，免费推荐)** 🆓
+  - **Doubao AI (豆包AI)** 🎨 - 图像生成主要方案，支持中文提示词优化
   - Google Gemini Imagen 4 (图像生成备用) / Replicate Flux/SDXL (备用)
 - **Validation:** Zod
 - **HTTP:** Axios
@@ -256,24 +266,27 @@ Echo采用**Big Five人格理论**（五大人格特质模型），这是心理�
   - ✨ 新增：4个相处互动画面
   - ✨ 风格：文艺与生活气息并存
   - ⚙️ 配置：max_tokens=8000, 无超时限制（后台持续生成，前端10分钟超时，后端5分钟限制），支持自动回退机制
-- [x] **Phase 5:** 视觉形象生成（Pollinations AI免费 + Gemini/Flux备用）⭐ UPGRADED
-- [x] **Phase 6:** Echo档案展示（完整人格档案页面）
+- [x] **Phase 5:** 视觉形象生成（Doubao AI + 性别选择 + 场景扩展）⭐ UPGRADED
+  - 🎨 **豆包AI主方案** - 支持中文提示词，写实插画风格
+  - 👤 **性别选择** - 生成前明确选择人物性别
+  - 🖼️ **场景扩展** - 在档案页可生成新场景，保留核心形象特征
+- [x] **Phase 6:** Echo档案展示（完整人格档案页面 + 场景扩展功能）
 - [x] 响应式设计（移动端 + 桌面端）
 - [x] 状态持久化（自动保存访谈和生成结果）
 - [x] 深色模式优化
 
-### 🚧 开发中 (Phase 7-9, 剩余 25% MVP)
+### 🚧 开发中 (Phase 7-8, 剩余 25% MVP)
 
 - [ ] **Phase 7:** 分享功能（生成分享卡片和导出）
-- [ ] **Phase 8:** 重新生成（人格和图像微调）
-- [ ] **Phase 9:** 性能优化和部署准备
+- [ ] **Phase 8:** 性能优化和部署准备
 
 ### 📅 未来计划 (v0.2.0+)
 
-- [ ] 视频生成（将静态形象转为动态视频）
+- [ ] **动态影像与语音故事** - 将静态形象转化为动态视频，并配上 Echo 的专属语音故事
+- [ ] **场景与装扮拓展** - 基于已生成的 Echo 形象，提供更多场景和服装的定制化生成
+- [ ] **互动体验** - 探索与 Echo 档案进行有限的、非对话式的互动模式
 - [ ] 用户认证系统
 - [ ] 历史记录管理
-- [ ] Echo社区画廊
 
 ---
 
@@ -324,7 +337,7 @@ Echo 遵循 7 大核心原则（详见 `.specify/memory/constitution.md`）：
 ## 🙏 致谢
 
 - Soul 平台提供的创新大赛机会
-- OpenAI、Anthropic、Replicate 提供的 AI 能力
+- DeepSeek、Doubao AI (火山引擎) 提供的 AI 能力
 - 开源社区的优秀工具与框架
 
 ---
