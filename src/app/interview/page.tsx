@@ -159,7 +159,7 @@ export default function InterviewPage() {
       </motion.header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 pb-32">
         <div className="space-y-8">
           {/* Question Card with Animation */}
           <AnimatePresence mode="wait">
@@ -194,7 +194,7 @@ export default function InterviewPage() {
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="fixed bottom-0 left-0 right-0 p-4"
+        className="fixed bottom-0 left-0 right-0 p-4 z-10"
       >
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-background/80 backdrop-blur rounded-2xl border border-border/60 px-4 py-3 shadow-lg shadow-background/30">
           <p className="text-sm text-muted-foreground">
