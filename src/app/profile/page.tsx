@@ -16,6 +16,14 @@ import { TraitDetails } from "@/components/profile/TraitDetails";
 import { LifeScenesCard } from "@/components/profile/LifeScenesCard";
 import { ShareDialog } from "@/components/share/ShareDialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Share2, Download, Wand2 } from "lucide-react";
 import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
 import { useGenerateImages, useGeneratePersonality } from "@/hooks/useGeneration";
@@ -41,6 +49,8 @@ export default function ProfilePage() {
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const generationRequestedRef = useRef(false);
+  const [sceneDialogOpen, setSceneDialogOpen] = useState(false);
+  const [customSceneInput, setCustomSceneInput] = useState("");
 
   useEffect(() => {
     setIsMounted(true);
@@ -155,9 +165,16 @@ export default function ProfilePage() {
     }
   };
 
-  const handleGenerateNewScene = async () => {
+  const handleGenerateNewScene = () => {
+    setSceneDialogOpen(true);
+  };
+
+  const handleConfirmGenerateScene = async () => {
     try {
-      await generateImages(1, "9:16");
+      const userInput = customSceneInput.trim() || undefined;
+      setSceneDialogOpen(false);
+      setCustomSceneInput("");
+      await generateImages(1, "9:16", undefined, userInput);
     } catch (error) {
       console.error("Generate new scene failed:", error);
       alert("生成失败，请稍后重试");
@@ -232,6 +249,47 @@ export default function ProfilePage() {
                   </Button>
                 )}
               </div>
+
+              {/* 生成新场景对话框 */}
+              <Dialog open={sceneDialogOpen} onOpenChange={setSceneDialogOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>生成新场景</DialogTitle>
+                    <DialogDescription>
+                      输入你想要的场景描述（可选），或者留空让 AI 自动生成。例如："黄昏的咖啡厅"、"清晨的书房"等。
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <textarea
+                      value={customSceneInput}
+                      onChange={(e) => setCustomSceneInput(e.target.value)}
+                      placeholder="例如：黄昏的咖啡厅，安静的阅读时光..."
+                      className="w-full min-h-[100px] px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 resize-none"
+                      disabled={isGeneratingImages}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSceneDialogOpen(false);
+                        setCustomSceneInput("");
+                      }}
+                      disabled={isGeneratingImages}
+                    >
+                      取消
+                    </Button>
+                    <Button
+                      onClick={handleConfirmGenerateScene}
+                      disabled={isGeneratingImages}
+                      className="gap-2"
+                    >
+                      <Wand2 className="w-4 h-4" />
+                      {isGeneratingImages ? "生成中..." : "生成"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </motion.section>
           ) : (
             <motion.section

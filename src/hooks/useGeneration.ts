@@ -151,7 +151,13 @@ export function useGenerateImages() {
   } = useGenerationStore();
 
   const generate = useCallback(
-    async (count: number = 1, aspectRatio: string = "9:16", customPersonality?: PersonalityProfile | PartnerPersonalityProfile) => {
+    async (
+      count: number = 1, 
+      aspectRatio: string = "9:16", 
+      customPersonality?: PersonalityProfile | PartnerPersonalityProfile,
+      userInput?: string,
+      sceneDescription?: string
+    ) => {
       // Priority: custom > partner > legacy personality
       let personalityData: PersonalityProfile | PartnerPersonalityProfile | null = null;
       
@@ -221,6 +227,16 @@ export function useGenerateImages() {
           console.log("📝 后续场景生成：使用保存的提示词", firstImagePrompt.substring(0, 50) + "...");
         } else {
           console.log("📝 首次生成：将使用 DeepSeek 生成提示词");
+        }
+
+        // 添加用户输入和场景描述（如果提供）
+        if (userInput && userInput.trim()) {
+          requestPayload.userInput = userInput.trim();
+          console.log("📝 用户输入的场景描述:", userInput.trim());
+        }
+        if (sceneDescription && sceneDescription.trim()) {
+          requestPayload.sceneDescription = sceneDescription.trim();
+          console.log("📝 场景描述:", sceneDescription.trim());
         }
 
         const response = await axios.post<GenerateImageResponse & { firstImagePrompt?: string }>(

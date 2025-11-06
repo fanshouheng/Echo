@@ -81,6 +81,9 @@ export async function POST(request: NextRequest) {
     const doubaoConfigured = isDoubaoConfigured();
     console.log(`Doubao configured: ${doubaoConfigured}`);
 
+    // 保存第一张的提示词，用于后续场景变化和响应返回
+    let savedFirstPrompt: string | null = null;
+
     // 首次生成：使用 DeepSeek 生成提示词
     // 后续场景：基于首次提示词修改
     let imagePrompt: string | null = null;
@@ -96,14 +99,16 @@ export async function POST(request: NextRequest) {
         imagePrompt = buildDoubaoPrompt(promptPersonality, 0, aspectRatio, preferredGender);
       }
     } else if (firstImagePrompt) {
-      // 后续场景，基于首次提示词修改
+      // 后续场景，基于首次提示词修改（但这里只是生成一个基础提示词，实际循环中会生成不同的场景）
       console.log("🎯 后续场景生成：基于首次提示词修改...");
+      // 对于多张图片，会在循环中为每张生成不同的场景，这里先生成一个基础提示词
       imagePrompt = generateSceneVariationPrompt(
         firstImagePrompt,
         sceneDescription,
-        userInput
+        userInput,
+        0 // 基础场景索引
       );
-      console.log("📝 修改后的提示词:", imagePrompt);
+      console.log("📝 基础提示词:", imagePrompt);
     } else {
       // Fallback：使用程序生成的提示词
       imagePrompt = buildDoubaoPrompt(promptPersonality, 0, aspectRatio, preferredGender);
@@ -125,7 +130,36 @@ export async function POST(request: NextRequest) {
       }
 
       for (let i = 0; i < count; i++) {
-        const scenePrompt = imagePrompt; // 使用生成的提示词
+        // 如果是首次生成且生成多张，需要为每张生成不同的场景
+        // 如果是后续生成，基于 firstImagePrompt 生成不同的场景变化
+        let scenePrompt: string;
+        
+        if (isFirstGeneration && i === 0) {
+          // 第一张使用原始提示词
+          scenePrompt = imagePrompt;
+          // 保存第一张的提示词，供后续图片使用（如果生成多张）
+          if (count > 1 && partnerData && imagePrompt) {
+            savedFirstPrompt = imagePrompt;
+          }
+        } else if (isFirstGeneration && i > 0 && savedFirstPrompt) {
+          // 首次生成的多张图片，基于第一张的提示词生成不同场景
+          scenePrompt = generateSceneVariationPrompt(savedFirstPrompt, undefined, undefined, i);
+        } else if (isFirstGeneration && i > 0) {
+          // 如果没有保存的提示词，基于当前 imagePrompt 生成变化
+          scenePrompt = generateSceneVariationPrompt(imagePrompt, undefined, undefined, i);
+        } else if (firstImagePrompt) {
+          // 后续生成，基于首次提示词生成不同场景
+          scenePrompt = generateSceneVariationPrompt(
+            firstImagePrompt,
+            sceneDescription,
+            userInput,
+            images.length + i // 使用已生成的图片数量作为场景索引
+          );
+        } else {
+          // Fallback：使用原始提示词
+          scenePrompt = imagePrompt;
+        }
+        
         console.log(`📝 Doubao Scene ${i + 1} prompt:`, scenePrompt);
 
         const sceneImages = await generateImageWithDoubao(scenePrompt, {
@@ -141,12 +175,13 @@ export async function POST(request: NextRequest) {
 
         images.push(sceneImages[0]);
         console.log(`✅ Doubao Scene ${i + 1} generated successfully`);
-        
-        // 首次生成时，保存提示词
-        if (isFirstGeneration && i === 0 && partnerData) {
-          // 提示词会在响应中返回，前端保存
-          console.log("💾 首次生成提示词已保存，将在响应中返回");
-        }
+      }
+      
+      // 首次生成时，保存第一张的提示词（在响应中返回）
+      // 使用 savedFirstPrompt 或 imagePrompt（如果没有保存）
+      const promptToReturn = savedFirstPrompt || imagePrompt;
+      if (isFirstGeneration && partnerData && promptToReturn && usedModel === "doubao") {
+        console.log("💾 首次生成提示词已保存，将在响应中返回");
       }
 
       console.log(`✅ Doubao generated ${images.length} images successfully`);
@@ -270,8 +305,13 @@ export async function POST(request: NextRequest) {
       generationTime,
     };
     
-    if (isFirstGeneration && partnerData && imagePrompt && usedModel === "doubao") {
-      response.firstImagePrompt = imagePrompt;
+    // 首次生成时，返回第一张的提示词（从 savedFirstPrompt 或 imagePrompt）
+    const promptToReturn = (isFirstGeneration && partnerData && imagePrompt && usedModel === "doubao") 
+      ? (savedFirstPrompt || imagePrompt)
+      : null;
+    
+    if (promptToReturn) {
+      response.firstImagePrompt = promptToReturn;
     }
 
     return NextResponse.json(response, { status: 200 });
