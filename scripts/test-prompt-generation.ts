@@ -4,7 +4,7 @@
  */
 
 import { buildDoubaoPrompt } from "../src/lib/prompts/image";
-import { PartnerPersonalityProfile } from "../src/types/partner-personality";
+import type { PartnerPersonalityProfile } from "../src/types/partner-personality";
 
 // Create a sample personality profile for testing
 const samplePersonality: PartnerPersonalityProfile = {

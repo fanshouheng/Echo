@@ -24,7 +24,7 @@ try {
 }
 
 import { generateInitialImagePrompt, generateSceneVariationPrompt } from "../src/lib/prompts/generate-image-prompt";
-import { PartnerPersonalityProfile } from "../src/types/partner-personality";
+import type { PartnerPersonalityProfile } from "../src/types/partner-personality";
 
 // 创建一个示例人格档案
 const samplePartner: PartnerPersonalityProfile = {

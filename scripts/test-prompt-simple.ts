@@ -20,7 +20,7 @@ try {
 } catch (error) {}
 
 import { generateInitialImagePrompt } from "../src/lib/prompts/generate-image-prompt";
-import { PartnerPersonalityProfile } from "../src/types/partner-personality";
+import type { PartnerPersonalityProfile } from "../src/types/partner-personality";
 
 const samplePartner: PartnerPersonalityProfile = {
   name: "Echo-01",

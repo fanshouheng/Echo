@@ -78,10 +78,11 @@ async function testImageGeneration() {
 
   // 导入提示词生成函数
   const { generateInitialImagePrompt } = await import("../src/lib/prompts/generate-image-prompt");
-  const { PartnerPersonalityProfile } = await import("../src/types/partner-personality");
+  const partnerModule = await import("../src/types/partner-personality");
+  type PartnerPersonalityProfile = typeof partnerModule extends { PartnerPersonalityProfile: infer T } ? T : any;
 
   // 创建测试人格数据
-  const testPartner: PartnerPersonalityProfile = {
+  const testPartner = {
     name: "Echo-测试",
     nickname: "Echo",
     age: "24岁",
@@ -177,7 +178,7 @@ async function testImageGeneration() {
       conflictExample: "冷静沟通",
       supportiveWords: "我相信你"
     }
-  };
+  } as any;
 
   try {
     console.log("1️⃣ 使用 DeepSeek 生成首次提示词...");
