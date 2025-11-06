@@ -30,6 +30,7 @@ interface GenerationState {
   personalityGeneratedAt: number | null;
   imagesGeneratedAt: number | null;
   usedModel: ImageModel | null;
+  firstImagePrompt: string | null; // 首次生成的提示词，用于后续场景生成
 
   // Actions
   setStatus: (status: GenerationStatus) => void;
@@ -40,6 +41,7 @@ interface GenerationState {
   appendImages: (images: string[], usedModel: ImageModel) => void;
   selectImage: (index: number) => void;
   reset: () => void;
+  setFirstImagePrompt: (prompt: string) => void; // 保存首次生成的提示词
 
   setPreferredGender: (gender: "male" | "female") => void;
 
@@ -61,6 +63,7 @@ const initialState = {
   personalityGeneratedAt: null,
   imagesGeneratedAt: null,
   usedModel: null,
+  firstImagePrompt: null,
 };
 
 export const useGenerationStore = create<GenerationState>()(
@@ -164,6 +167,11 @@ export const useGenerationStore = create<GenerationState>()(
         const { images, selectedImageIndex } = get();
         return images[selectedImageIndex] || null;
       },
+
+      // Set first image prompt
+      setFirstImagePrompt: (prompt: string) => {
+        set({ firstImagePrompt: prompt });
+      },
     }),
     {
       name: "echo-generation-storage",
@@ -176,6 +184,7 @@ export const useGenerationStore = create<GenerationState>()(
         personalityGeneratedAt: state.personalityGeneratedAt,
         imagesGeneratedAt: state.imagesGeneratedAt,
         usedModel: state.usedModel,
+        firstImagePrompt: state.firstImagePrompt,
       }),
     }
   )

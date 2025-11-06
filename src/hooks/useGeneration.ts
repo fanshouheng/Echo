@@ -21,6 +21,7 @@ interface GenerateImageResponse {
   images: string[];
   usedModel: ImageModel;
   generationTime: number;
+  firstImagePrompt?: string; // 首次生成的提示词
 }
 
 /**
@@ -144,6 +145,9 @@ export function useGenerateImages() {
     setStatus,
     setError: setStoreError,
     preferredGender,
+    firstImagePrompt,
+    setFirstImagePrompt,
+    images: currentImages,
   } = useGenerationStore();
 
   const generate = useCallback(
@@ -192,6 +196,9 @@ export function useGenerateImages() {
           apiPersonality = personalityData as PersonalityProfile;
         }
 
+        // 判断是否是首次生成
+        const isFirstGeneration = currentImages.length === 0 || !firstImagePrompt;
+        
         // Send both legacy personality (for schema validation) and partner data (for enhanced prompts)
         const requestPayload: any = { 
           personality: apiPersonality,
@@ -207,14 +214,29 @@ export function useGenerateImages() {
           requestPayload.preferredGender = inferredGender;
         }
 
-        const response = await axios.post<GenerateImageResponse>(
+        // 首次生成：不传 firstImagePrompt，让 API 使用 DeepSeek 生成
+        // 后续生成：传递 firstImagePrompt，基于它修改场景
+        if (!isFirstGeneration && firstImagePrompt) {
+          requestPayload.firstImagePrompt = firstImagePrompt;
+          console.log("📝 后续场景生成：使用保存的提示词", firstImagePrompt.substring(0, 50) + "...");
+        } else {
+          console.log("📝 首次生成：将使用 DeepSeek 生成提示词");
+        }
+
+        const response = await axios.post<GenerateImageResponse & { firstImagePrompt?: string }>(
           "/api/generate-image",
           requestPayload,
           { timeout: 60000 }
         );
 
-        const { images, usedModel } = response.data;
-        const currentImages = useGenerationStore.getState().images;
+        const { images, usedModel, firstImagePrompt: returnedPrompt } = response.data;
+        
+        // 如果是首次生成且返回了提示词，保存它
+        if (isFirstGeneration && returnedPrompt) {
+          setFirstImagePrompt(returnedPrompt);
+          console.log("💾 首次生成提示词已保存", returnedPrompt.substring(0, 50) + "...");
+        }
+        
         if (currentImages.length > 0) {
           appendImages(images, usedModel);
         } else {
@@ -234,7 +256,7 @@ export function useGenerateImages() {
         setIsLoading(false);
       }
     },
-    [storePersonality, setImages, appendImages, setStatus, setStoreError]
+    [storePersonality, storePartner, setImages, appendImages, setStatus, setStoreError, preferredGender, firstImagePrompt, currentImages, setFirstImagePrompt]
   );
 
   return { generate, isLoading, error };

@@ -55,6 +55,9 @@ export const generateImageRequestSchema = z.object({
   aspectRatio: z.enum(["1:1", "3:4", "4:3", "9:16", "16:9"]).default("9:16"),
   count: z.number().min(1).max(1).default(1),
   preferredGender: z.enum(["male", "female"]).optional(),
+  firstImagePrompt: z.string().optional(), // 首次生成的提示词
+  sceneDescription: z.string().optional(), // 新场景描述
+  userInput: z.string().optional(), // 用户输入的场景描述
 });
 
 // Keep old name for backwards compatibility

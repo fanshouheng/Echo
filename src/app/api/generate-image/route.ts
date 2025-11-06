@@ -19,6 +19,7 @@ import {
   getImageDimensions,
 } from "@/lib/prompts/image";
 import { partnerToLegacyPersonality } from "@/types/partner-personality";
+import { generateInitialImagePrompt, generateSceneVariationPrompt } from "@/lib/prompts/generate-image-prompt";
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -44,17 +45,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { personality, aspectRatio = "9:16", count = 1, preferredGender } = validationResult.data;
+    const { personality, aspectRatio = "9:16", count = 1, preferredGender, firstImagePrompt, sceneDescription, userInput } = validationResult.data;
     console.log("Personality:", personality.name);
     
     // Use partner data if available for better prompt generation, otherwise use legacy personality
     const promptPersonality = partnerData || personality;
+    const isFirstGeneration = !firstImagePrompt;
     
     if (partnerData) {
       console.log("🎨 Using partner data for enhanced prompt generation");
     } else {
       console.log("🎨 Using legacy personality data for prompt generation");
     }
+    
+    console.log("📝 Generation type:", isFirstGeneration ? "首次生成（使用DeepSeek生成提示词）" : "后续场景（基于首次提示词）");
     
     // Check API configurations
     const geminiConfigured = isGeminiConfigured();
@@ -77,6 +81,35 @@ export async function POST(request: NextRequest) {
     const doubaoConfigured = isDoubaoConfigured();
     console.log(`Doubao configured: ${doubaoConfigured}`);
 
+    // 首次生成：使用 DeepSeek 生成提示词
+    // 后续场景：基于首次提示词修改
+    let imagePrompt: string | null = null;
+    
+    if (isFirstGeneration && partnerData) {
+      // 首次生成，使用 DeepSeek 生成提示词
+      console.log("🎯 首次生成：使用 DeepSeek 生成提示词...");
+      try {
+        imagePrompt = await generateInitialImagePrompt(partnerData as any, aspectRatio);
+        console.log("✅ DeepSeek 生成的提示词:", imagePrompt);
+      } catch (error) {
+        console.error("❌ DeepSeek 生成提示词失败，使用 Fallback:", error);
+        imagePrompt = buildDoubaoPrompt(promptPersonality, 0, aspectRatio, preferredGender);
+      }
+    } else if (firstImagePrompt) {
+      // 后续场景，基于首次提示词修改
+      console.log("🎯 后续场景生成：基于首次提示词修改...");
+      imagePrompt = generateSceneVariationPrompt(
+        firstImagePrompt,
+        sceneDescription,
+        userInput
+      );
+      console.log("📝 修改后的提示词:", imagePrompt);
+    } else {
+      // Fallback：使用程序生成的提示词
+      imagePrompt = buildDoubaoPrompt(promptPersonality, 0, aspectRatio, preferredGender);
+      console.log("⚠️ 使用程序生成的提示词（Fallback）:", imagePrompt);
+    }
+
     try {
       if (!doubaoConfigured) {
         throw new Error("豆包AI接口未配置");
@@ -87,8 +120,12 @@ export async function POST(request: NextRequest) {
       console.log("Count:", count);
       console.log("Aspect Ratio:", aspectRatio);
 
+      if (!imagePrompt) {
+        throw new Error("提示词生成失败");
+      }
+
       for (let i = 0; i < count; i++) {
-        const scenePrompt = buildDoubaoPrompt(promptPersonality, i, aspectRatio, preferredGender);
+        const scenePrompt = imagePrompt; // 使用生成的提示词
         console.log(`📝 Doubao Scene ${i + 1} prompt:`, scenePrompt);
 
         const sceneImages = await generateImageWithDoubao(scenePrompt, {
@@ -104,6 +141,12 @@ export async function POST(request: NextRequest) {
 
         images.push(sceneImages[0]);
         console.log(`✅ Doubao Scene ${i + 1} generated successfully`);
+        
+        // 首次生成时，保存提示词
+        if (isFirstGeneration && i === 0 && partnerData) {
+          // 提示词会在响应中返回，前端保存
+          console.log("💾 首次生成提示词已保存，将在响应中返回");
+        }
       }
 
       console.log(`✅ Doubao generated ${images.length} images successfully`);
@@ -220,14 +263,18 @@ export async function POST(request: NextRequest) {
     const generationTime = Date.now() - startTime;
 
     // Return success response
-    return NextResponse.json(
-      {
-        images,
-        usedModel,
-        generationTime,
-      },
-      { status: 200 }
-    );
+    // 如果是首次生成且使用了 DeepSeek 生成的提示词，返回提示词供前端保存
+    const response: any = {
+      images,
+      usedModel,
+      generationTime,
+    };
+    
+    if (isFirstGeneration && partnerData && imagePrompt && usedModel === "doubao") {
+      response.firstImagePrompt = imagePrompt;
+    }
+
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error("Image generation error:", error);
     const { status, body } = handleAPIError(error);

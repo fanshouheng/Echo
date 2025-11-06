@@ -108,15 +108,47 @@ function deriveVisualHints(
 function buildBaseInstructionFromHints(
   hints: VisualProfileHints,
   orientation: string,
-  composition: string
+  composition: string,
+  sceneIndex: number = 0,
+  sceneDescription?: string
 ): string {
-  const occupationText = hints.occupation ? `，职业/身份：${hints.occupation}` : "";
-  const outfitText = hints.outfit ? `，穿着${hints.outfit}` : "";
-  const accessoriesText = hints.accessories.length ? `，可见${hints.accessories.join("、")}` : "";
-  const lightingText = hints.lighting ? `，光线呈现${hints.lighting}` : "";
-  const moodText = hints.moodKeywords.length ? `，氛围关键词：${hints.moodKeywords.join("、")}` : "";
+  // 简化：只保留核心信息，参考背景图的简洁风格
+  const { lightingText } = adaptVisualHintsForScene(hints, sceneIndex, sceneDescription);
+  
+  // 简洁的基础指令：风格 + 构图 + 光线
+  return `写实插画，${orientation}构图，${lightingText}。`;
+}
 
-  return `写实插画风格，${orientation}构图，人物为${hints.ageDescriptor}的${hints.genderTerm}${occupationText}${outfitText}${accessoriesText}。保持${composition}，场景简洁干净${lightingText}，画面仅出现这一位主角，禁止出现第二个清晰人物（背景人影需虚化不可辨认）。拒绝儿童化、老龄化、夸张漫画风、过度磨皮或商业滤镜${moodText}，整体表情放松自然。`;
+/**
+ * 根据场景索引动态调整视觉提示，简化版
+ */
+function adaptVisualHintsForScene(
+  hints: VisualProfileHints,
+  sceneIndex: number,
+  sceneDescription?: string
+): {
+  lightingText: string;
+} {
+  const sceneLower = (sceneDescription || "").toLowerCase();
+  
+  // 简化光线描述，根据场景时间自动判断
+  let lightingText = "柔和自然光";
+  
+  if (sceneLower.includes("清晨") || sceneLower.includes("早晨") || sceneLower.includes("早上")) {
+    lightingText = "清晨柔和自然光";
+  } else if (sceneLower.includes("午后") || sceneLower.includes("下午")) {
+    lightingText = "午后柔和光线";
+  } else if (sceneLower.includes("黄昏") || sceneLower.includes("傍晚")) {
+    lightingText = "黄昏金色光线";
+  } else if (sceneLower.includes("夜晚") || sceneLower.includes("深夜") || sceneLower.includes("晚上")) {
+    lightingText = "夜晚室内柔光";
+  } else if (hints.lighting) {
+    lightingText = hints.lighting.replace("光线呈现", "").trim();
+  }
+  
+  return {
+    lightingText,
+  };
 }
 
 /**
@@ -221,7 +253,6 @@ export function buildDoubaoPrompt(
   const orientation = aspectRatio === "9:16" ? "竖版" : aspectRatio === "1:1" ? "方形" : "横版";
   const composition = aspectRatio === "9:16" ? "全身或大半身竖构图" : "带环境的宽幅构图";
   const hints = deriveVisualHints(personality, preferredGender);
-  const baseInstruction = buildBaseInstructionFromHints(hints, orientation, composition);
   const isPartnerProfile = 'corePersonality' in personality;
 
   if (isPartnerProfile) {
@@ -229,7 +260,8 @@ export function buildDoubaoPrompt(
       personality as PartnerPersonalityProfile,
       hints,
       sceneIndex,
-      baseInstruction,
+      orientation,
+      composition,
       preferredGender
     );
   }
@@ -238,7 +270,8 @@ export function buildDoubaoPrompt(
     personality as PersonalityProfile,
     hints,
     sceneIndex,
-    baseInstruction,
+    orientation,
+    composition,
     preferredGender
   );
 }
@@ -247,72 +280,79 @@ function buildPartnerDoubaoPrompt(
   partner: PartnerPersonalityProfile,
   hints: VisualProfileHints,
   sceneIndex: number,
-  baseInstruction: string,
+  orientation: string,
+  composition: string,
   preferredGender?: "male" | "female"
 ): string {
-  const { name, nickname, vibe, corePersonality, lifestyleCompatibility } = partner;
-  const traitSummary = corePersonality.primaryTraits.slice(0, 3).join("、") || corePersonality.primaryTraits.join("、");
-  const lifestyle = lifestyleCompatibility?.dailyRhythm ? `日常节奏：${lifestyleCompatibility.dailyRhythm}。` : "";
-
   const derivedScenes = [
-    hints.primaryScene ? ensureSoloDescription(hints.primaryScene, preferredGender) : undefined,
-    ...hints.alternateScenes.map((scene) => ensureSoloDescription(scene, preferredGender)),
+    hints.primaryScene ? hints.primaryScene : undefined,
+    ...hints.alternateScenes,
     ...getPartnerDoubaoScenes(partner, preferredGender),
   ].filter((item): item is string => Boolean(item));
 
   const scenes = derivedScenes.length ? derivedScenes : getDefaultDoubaoScenes(preferredGender);
-  const scene = scenes[sceneIndex % scenes.length];
-  const nameLabel = nickname ? `${name}（${nickname}）` : name;
-
-  return `${baseInstruction}人物：${nameLabel}，性别设定：${hints.genderTerm}，整体气质：${vibe}，性格特质：${traitSummary}。${lifestyle}主要场景：${scene}。请保持姿态放松、表情真诚，与环境自然互动，让生活感自在流露。`;
+  const sceneRaw = scenes[sceneIndex % scenes.length];
+  // 清理场景描述，去掉重复的"画面仅聚焦"等描述
+  const scene = sceneRaw.replace(/，场景保持简洁，画面仅聚焦.*/g, "").trim();
+  
+  // 生成简洁的基础指令
+  const baseInstruction = buildBaseInstructionFromHints(hints, orientation, composition, sceneIndex, scene);
+  
+  // 简化：只保留核心场景描述，参考背景图风格
+  const genderTerm = hints.genderTerm === "年轻女性" ? "女孩" : hints.genderTerm === "年轻男性" ? "青年" : "年轻人";
+  
+  return `${baseInstruction}${scene}，${genderTerm}${scene.includes(genderTerm) ? "" : "在其中"}，色调温暖，氛围真实自然，画面仅出现这一位主角。`;
 }
 
 function buildLegacyDoubaoPrompt(
   personality: PersonalityProfile,
   hints: VisualProfileHints,
   sceneIndex: number,
-  baseInstruction: string,
+  orientation: string,
+  composition: string,
   preferredGender?: "male" | "female"
 ): string {
   const fallbackScenes = getLegacyDoubaoScenes(personality, preferredGender);
   const scenes = [
-    hints.primaryScene ? ensureSoloDescription(hints.primaryScene, preferredGender) : undefined,
-    ...hints.alternateScenes.map((scene) => ensureSoloDescription(scene, preferredGender)),
+    hints.primaryScene ? hints.primaryScene : undefined,
+    ...hints.alternateScenes,
     ...fallbackScenes,
   ].filter((item): item is string => Boolean(item));
 
   const sceneList = scenes.length ? scenes : getDefaultDoubaoScenes(preferredGender);
-  const scene = sceneList[sceneIndex % sceneList.length];
-  const moodKeywords = personality.keywords?.slice(0, 3).join("、") || personality.tagline;
-
-  return `${baseInstruction}人物：${personality.name || hints.genderTerm}，气质关键词：${moodKeywords}。场景：${scene}。请让主体与环境自然互动，突出轻松真实的生活氛围。`;
+  const sceneRaw = sceneList[sceneIndex % sceneList.length];
+  // 清理场景描述
+  const scene = sceneRaw.replace(/，场景保持简洁，画面仅聚焦.*/g, "").trim();
+  
+  // 生成简洁的基础指令
+  const baseInstruction = buildBaseInstructionFromHints(hints, orientation, composition, sceneIndex, scene);
+  
+  // 简化：只保留核心场景描述
+  const genderTerm = hints.genderTerm === "年轻女性" ? "女孩" : hints.genderTerm === "年轻男性" ? "青年" : "年轻人";
+  
+  return `${baseInstruction}${scene}，${genderTerm}${scene.includes(genderTerm) ? "" : "在其中"}，色调温暖，氛围真实自然，画面仅出现这一位主角。`;
 }
 
 function getPartnerDoubaoScenes(partner: PartnerPersonalityProfile, preferredGender?: "male" | "female"): string[] {
   const scenes: string[] = [];
-  const { dailyLifeScenes, livingTogether, lifestyleCompatibility, uniqueQualities } = partner;
+  const { dailyLifeScenes, livingTogether } = partner;
+  const genderTerm = preferredGender === "female" || partner.gender === "female" ? "女孩" 
+    : preferredGender === "male" || partner.gender === "male" ? "青年" 
+    : "年轻人";
 
-  const addScene = (text?: string, prefix?: string) => {
+  const addScene = (text?: string) => {
     if (!text) return;
     const clean = normalizeSceneText(text);
     if (!clean) return;
-    scenes.push(prefix ? `${prefix}${ensureSoloDescription(clean, preferredGender)}` : ensureSoloDescription(clean, preferredGender));
+    // 简化：提取核心场景描述
+    scenes.push(`${clean}，${genderTerm}在其中`);
   };
 
-  addScene(dailyLifeScenes?.morningRoutine, "晨光厨房：");
-  addScene(dailyLifeScenes?.quietMoments, "窗边时刻：");
-  addScene(dailyLifeScenes?.weekendActivity, "周末慢生活：");
-  addScene(dailyLifeScenes?.playfulMoments, "轻松互动：");
-  addScene(livingTogether?.eveningScene, "傍晚客厅：");
-  addScene(livingTogether?.weekendScene, "居家午后：");
-
-  if (lifestyleCompatibility?.socialStyle) {
-    scenes.push(ensureSoloDescription(`城市公共空间中，体现${normalizeSceneText(lifestyleCompatibility.socialStyle)}的社交方式`, preferredGender));
-  }
-
-  if (uniqueQualities?.strengths?.length) {
-    scenes.push(ensureSoloDescription(`在个人擅长的领域中，展现${uniqueQualities.strengths.slice(0, 1).join("、")}特质的瞬间`, preferredGender));
-  }
+  addScene(dailyLifeScenes?.morningRoutine);
+  addScene(dailyLifeScenes?.quietMoments);
+  addScene(dailyLifeScenes?.weekendActivity);
+  addScene(livingTogether?.eveningScene);
+  addScene(livingTogether?.weekendScene);
 
   const defaults = getDefaultDoubaoScenes(preferredGender);
   return scenes.length ? scenes : defaults;
@@ -324,27 +364,24 @@ function getLegacyDoubaoScenes(personality: PersonalityProfile, preferredGender?
     return defaults;
   }
 
+  const genderTerm = preferredGender === "female" ? "女孩" : preferredGender === "male" ? "青年" : "年轻人";
   const scenes = [
-    ensureSoloDescription(`午后靠窗的书桌，人物安静翻阅笔记`, preferredGender),
-    ensureSoloDescription(`傍晚的公寓阳台，人物倚着栏杆望向城市`, preferredGender),
-    ensureSoloDescription(`柔和灯光的客厅沙发，人物随手翻看杂志`, preferredGender),
+    `午后靠窗书桌，${genderTerm}安静翻阅笔记`,
+    `傍晚公寓阳台，${genderTerm}倚着栏杆望向城市`,
+    `柔和灯光客厅沙发，${genderTerm}随手翻看杂志`,
   ];
 
   return scenes.length ? scenes : defaults;
 }
 
 function getDefaultDoubaoScenes(preferredGender?: "male" | "female"): string[] {
+  const genderTerm = preferredGender === "female" ? "女孩" : preferredGender === "male" ? "青年" : "年轻人";
   return [
-    ensureSoloDescription("清晨开放式厨房的阳光下，人物准备简单早餐", preferredGender),
-    ensureSoloDescription("午后窗边的咖啡角，人物静静阅读", preferredGender),
-    ensureSoloDescription("黄昏街区的石板路，人物手持咖啡缓步前行", preferredGender),
-    ensureSoloDescription("夜晚客厅的柔光下，人物坐在沙发整理相册", preferredGender),
+    `清晨开放式厨房，${genderTerm}准备简单早餐`,
+    `午后窗边咖啡角，${genderTerm}静静阅读`,
+    `黄昏街区石板路，${genderTerm}手持咖啡缓步前行`,
+    `夜晚客厅柔光，${genderTerm}坐在沙发整理相册`,
   ];
-}
-
-function ensureSoloDescription(scene: string, preferredGender?: "male" | "female"): string {
-  const genderText = preferredGender === "female" ? "这位年轻女性" : preferredGender === "male" ? "这位年轻男性" : "这位年轻人";
-  return `${scene}，场景保持简洁，画面仅聚焦${genderText}，不出现其他清晰角色`;
 }
 
 function normalizeSceneText(text: string): string {
