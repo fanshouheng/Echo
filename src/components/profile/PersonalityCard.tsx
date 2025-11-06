@@ -14,33 +14,19 @@ interface PersonalityCardProps {
 
 export function PersonalityCard({ personality }: PersonalityCardProps) {
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold text-foreground">
+    <Card className="border-border/50 bg-gradient-to-br from-card/50 to-primary/5 backdrop-blur-sm shadow-lg">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-2xl md:text-3xl font-bold text-foreground mb-2">
           关于 {personality.name}
         </CardTitle>
-        <CardDescription className="text-lg">{personality.tagline}</CardDescription>
+        <CardDescription className="text-base md:text-lg text-muted-foreground leading-relaxed">
+          {personality.tagline}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Communication Style */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-primary">沟通风格</h3>
-          <p className="text-foreground/90 leading-relaxed">
-            {personality.communicationStyle}
-          </p>
-        </div>
-
-        {/* Values */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-secondary">价值观</h3>
-          <p className="text-foreground/90 leading-relaxed">{personality.values}</p>
-        </div>
-
-        {/* Why Match */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-accent">为什么是TA</h3>
-          <p className="text-foreground/90 leading-relaxed">{personality.whyMatch}</p>
-        </div>
+      <CardContent>
+        <p className="text-foreground/90 leading-relaxed text-sm md:text-base">
+          {personality.communicationStyle}
+        </p>
       </CardContent>
     </Card>
   );

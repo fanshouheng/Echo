@@ -166,11 +166,11 @@ export function ImageGallery({ images }: ImageGalleryProps) {
     <>
       {/* Gallery Grid */}
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold text-center text-foreground">
+        <h3 className="text-xl md:text-2xl font-bold text-foreground mb-4">
           TA 的形象
         </h3>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {images.length === 0 ? (
             <div className="col-span-full text-center text-muted-foreground py-8">
               <p>暂无图片</p>
@@ -252,13 +252,14 @@ export function ImageGallery({ images }: ImageGalleryProps) {
         </div>
         
         {/* Image count indicator */}
-        <p className="text-sm text-center text-muted-foreground">
-          共 {images.length} 张图片 {loadedImages.size > 0 && `(${loadedImages.size} 张已加载)`}
-        </p>
-
-        <p className="text-sm text-center text-muted-foreground">
-          点击选择你最喜欢的形象
-        </p>
+        <div className="pt-2 space-y-1">
+          <p className="text-xs md:text-sm text-muted-foreground">
+            共 {images.length} 张图片 {loadedImages.size > 0 && `(${loadedImages.size} 张已加载)`}
+          </p>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            点击选择你最喜欢的形象
+          </p>
+        </div>
       </div>
 
       {/* Fullscreen Modal */}

@@ -16,6 +16,8 @@ import { TraitDetails } from "@/components/profile/TraitDetails";
 import { LifeScenesCard } from "@/components/profile/LifeScenesCard";
 import { ShareDialog } from "@/components/share/ShareDialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, Coffee, Moon, Home, MessageSquare, Heart } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -211,110 +213,124 @@ export default function ProfilePage() {
         </div>
       </motion.header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8 md:py-12 max-w-7xl">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="space-y-12"
+          className="space-y-6 md:space-y-8"
         >
-          <motion.section variants={fadeInUp} className="text-center space-y-6">
-            <h2 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              {personality.name}
-            </h2>
-            <p className="text-2xl text-muted-foreground">{personality.tagline}</p>
-
-            <div className="flex flex-wrap gap-3 justify-center">
-              {personality.keywords.map((keyword, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="px-4 py-2 rounded-full bg-primary/20 text-primary font-medium"
-                >
-                  {keyword}
-                </motion.span>
-              ))}
-            </div>
-          </motion.section>
-
-          {hasAnyImages ? (
-            <motion.section variants={fadeInUp} className="space-y-6">
-              <ImageGallery images={images} />
-
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={handleGenerateNewScene}
-                  className="gap-2"
-                  disabled={isGeneratingImages}
-                >
-                  <Wand2 className="w-4 h-4" />
-                  {isGeneratingImages ? "生成中..." : "生成新场景"}
-                </Button>
-                {selectedImage && (
-                  <Button size="lg" onClick={handleDownload} className="gap-2">
-                    <Download className="w-4 h-4" />
-                    下载当前形象
-                  </Button>
-                )}
-              </div>
-
-              {/* 生成新场景对话框 */}
-              <Dialog open={sceneDialogOpen} onOpenChange={setSceneDialogOpen}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>生成新场景</DialogTitle>
-                    <DialogDescription>
-                      输入你想要的场景描述（可选），或者留空让 AI 自动生成。例如："黄昏的咖啡厅"、"清晨的书房"等。
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <textarea
-                      value={customSceneInput}
-                      onChange={(e) => setCustomSceneInput(e.target.value)}
-                      placeholder="例如：黄昏的咖啡厅，安静的阅读时光..."
-                      className="w-full min-h-[100px] px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 resize-none"
-                      disabled={isGeneratingImages}
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSceneDialogOpen(false);
-                        setCustomSceneInput("");
-                      }}
-                      disabled={isGeneratingImages}
-                    >
-                      取消
-                    </Button>
-                    <Button
-                      onClick={handleConfirmGenerateScene}
-                      disabled={isGeneratingImages}
-                      className="gap-2"
-                    >
-                      <Wand2 className="w-4 h-4" />
-                      {isGeneratingImages ? "生成中..." : "生成"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </motion.section>
-          ) : (
-            <motion.section
-              variants={fadeInUp}
-              className="space-y-6 rounded-3xl border border-border/60 bg-background/80 px-6 py-12 text-center shadow-lg shadow-background/20"
-            >
-              <div className="space-y-4">
-                <h3 className="text-2xl font-semibold text-foreground">等待首张 Echo 形象</h3>
-                <p className="text-muted-foreground">
-                  人格档案已经准备好，点击下方按钮生成 Echo 的首张形象。生成后即可继续解锁更多场景与装扮。
+          {/* 顶部区域：名字介绍 + 图片 - 左右布局 */}
+          <motion.section variants={fadeInUp} className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 pb-6">
+            {/* 左侧：名字和介绍 */}
+            <div className="lg:col-span-5 space-y-4 md:space-y-6 flex flex-col justify-center">
+              <div className="space-y-3 md:space-y-4">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                  {personality.name}
+                </h2>
+                <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed">
+                  {personality.tagline}
                 </p>
               </div>
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-wrap gap-2 md:gap-3 pt-2">
+                {personality.keywords.map((keyword, index) => (
+                  <motion.span
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/20 text-primary text-sm md:text-base font-medium"
+                  >
+                    {keyword}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+
+            {/* 右侧：图片区域 */}
+            {hasAnyImages && (
+              <div className="lg:col-span-7">
+                <ImageGallery images={images} />
+              </div>
+            )}
+          </motion.section>
+
+          {/* 图片操作按钮 */}
+          {hasAnyImages && (
+            <motion.section variants={fadeInUp} className="flex flex-wrap justify-center gap-3 pb-6">
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={handleGenerateNewScene}
+                className="gap-2"
+                disabled={isGeneratingImages}
+              >
+                <Wand2 className="w-4 h-4" />
+                {isGeneratingImages ? "生成中..." : "生成新场景"}
+              </Button>
+              {selectedImage && (
+                <Button size="lg" onClick={handleDownload} className="gap-2">
+                  <Download className="w-4 h-4" />
+                  下载当前形象
+                </Button>
+              )}
+            </motion.section>
+          )}
+
+          {/* 生成新场景对话框 */}
+          <Dialog open={sceneDialogOpen} onOpenChange={setSceneDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>生成新场景</DialogTitle>
+                <DialogDescription>
+                  输入你想要的场景描述（可选），或者留空让 AI 自动生成。例如："黄昏的咖啡厅"、"清晨的书房"等。
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <textarea
+                  value={customSceneInput}
+                  onChange={(e) => setCustomSceneInput(e.target.value)}
+                  placeholder="例如：黄昏的咖啡厅，安静的阅读时光..."
+                  className="w-full min-h-[100px] px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 resize-none"
+                  disabled={isGeneratingImages}
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSceneDialogOpen(false);
+                    setCustomSceneInput("");
+                  }}
+                  disabled={isGeneratingImages}
+                >
+                  取消
+                </Button>
+                <Button
+                  onClick={handleConfirmGenerateScene}
+                  disabled={isGeneratingImages}
+                  className="gap-2"
+                >
+                  <Wand2 className="w-4 h-4" />
+                  {isGeneratingImages ? "生成中..." : "生成"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* 如果没有图片，显示生成提示 */}
+          {!hasAnyImages && (
+            <motion.section
+              variants={fadeInUp}
+              className="rounded-2xl border border-border/60 bg-background/80 px-6 py-10 text-center shadow-lg"
+            >
+              <div className="space-y-4">
+                <h3 className="text-xl md:text-2xl font-semibold text-foreground">等待首张 Echo 形象</h3>
+                <p className="text-muted-foreground text-sm md:text-base">
+                  人格档案已经准备好，点击下方按钮生成 Echo 的首张形象。
+                </p>
+              </div>
+              <div className="flex flex-col items-center gap-3 pt-4">
                 <Button
                   size="lg"
                   onClick={handleGenerateFirstImage}
@@ -331,23 +347,262 @@ export default function ProfilePage() {
             </motion.section>
           )}
 
-          <motion.section variants={fadeInUp}>
-            <PersonalityCard personality={personality} />
-          </motion.section>
+          {/* 网格布局区域 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
+            {/* 第一行：关于TA - 占满整行 */}
+            <motion.div variants={fadeInUp} className="lg:col-span-12">
+              <PersonalityCard personality={personality} />
+            </motion.div>
 
-          <motion.section variants={fadeInUp}>
-            <TraitDetails personality={personality} />
-          </motion.section>
+            {/* 第二行：沟通风格 + 价值观 - 两个并排 */}
+            <motion.div variants={fadeInUp} className="lg:col-span-6">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-lg h-full">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-bold text-primary flex items-center gap-2">
+                    <span className="w-1 h-6 bg-primary rounded-full"></span>
+                    沟通风格
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-foreground/90 leading-relaxed text-sm md:text-base">
+                    {personality.communicationStyle}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          {partner && (
-            <motion.section variants={fadeInUp}>
-              <LifeScenesCard partner={partner} />
-            </motion.section>
-          )}
+            <motion.div variants={fadeInUp} className="lg:col-span-6">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-lg h-full">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-bold text-secondary flex items-center gap-2">
+                    <span className="w-1 h-6 bg-secondary rounded-full"></span>
+                    价值观
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-foreground/90 leading-relaxed text-sm md:text-base">
+                    {personality.values}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
 
+            {/* 第三行：为什么是TA - 占满整行 */}
+            <motion.div variants={fadeInUp} className="lg:col-span-12">
+              <Card className="border-border/50 bg-gradient-to-r from-card/50 to-accent/5 backdrop-blur-sm shadow-lg">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl md:text-2xl font-bold text-accent flex items-center gap-2">
+                    <span className="w-1 h-6 bg-accent rounded-full"></span>
+                    为什么是TA
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-foreground/90 leading-relaxed text-sm md:text-base">
+                    {personality.whyMatch}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* 第四行：独特之处 - 占满整行 */}
+            <motion.div variants={fadeInUp} className="lg:col-span-12">
+              <TraitDetails personality={personality} />
+            </motion.div>
+
+            {/* 如果有 partner 数据，显示生活场景 */}
+            {partner && (
+              <>
+                {/* 第五行：日常生活场景 - 大卡片占满整行 */}
+                {partner.dailyLifeScenes && (
+                  <motion.div variants={fadeInUp} className="lg:col-span-12">
+                    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-3">
+                          <Calendar className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                          日常生活场景
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                          {partner.dailyLifeScenes.morningRoutine && (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-primary">
+                                <Coffee className="w-4 h-4" />
+                                <h3 className="text-base md:text-lg font-semibold">早晨时光</h3>
+                              </div>
+                              <p className="text-foreground/90 leading-relaxed text-sm md:text-base pl-6">
+                                {partner.dailyLifeScenes.morningRoutine}
+                              </p>
+                            </div>
+                          )}
+                          {partner.dailyLifeScenes.eveningRoutine && (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-secondary">
+                                <Moon className="w-4 h-4" />
+                                <h3 className="text-base md:text-lg font-semibold">夜晚时光</h3>
+                              </div>
+                              <p className="text-foreground/90 leading-relaxed text-sm md:text-base pl-6">
+                                {partner.dailyLifeScenes.eveningRoutine}
+                              </p>
+                            </div>
+                          )}
+                          {partner.dailyLifeScenes.weekendActivity && (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-accent">
+                                <Calendar className="w-4 h-4" />
+                                <h3 className="text-base md:text-lg font-semibold">周末时光</h3>
+                              </div>
+                              <p className="text-foreground/90 leading-relaxed text-sm md:text-base pl-6">
+                                {partner.dailyLifeScenes.weekendActivity}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
+                {/* 第六行：互动方式 + 一起生活 - 两个并排 */}
+                {partner.interactionDetails && (
+                  <motion.div variants={fadeInUp} className="lg:col-span-6">
+                    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-lg h-full">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+                          <MessageSquare className="w-5 h-5 text-primary" />
+                          TA 的互动方式
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {partner.interactionDetails.howTheyGreet && (
+                          <div className="space-y-2">
+                            <h3 className="text-sm md:text-base font-semibold text-primary">如何打招呼</h3>
+                            <p className="text-foreground/90 leading-relaxed text-sm">
+                              {partner.interactionDetails.howTheyGreet}
+                            </p>
+                          </div>
+                        )}
+                        {partner.interactionDetails.howTheyShowCare && (
+                          <div className="space-y-2 pt-2 border-t border-border/30">
+                            <h3 className="text-sm md:text-base font-semibold text-secondary">如何表达关心</h3>
+                            <p className="text-foreground/90 leading-relaxed text-sm">
+                              {partner.interactionDetails.howTheyShowCare}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
+                {partner.livingTogether && (
+                  <motion.div variants={fadeInUp} className="lg:col-span-6">
+                    <Card className="border-border/50 bg-gradient-to-br from-card/50 to-primary/5 backdrop-blur-sm shadow-lg h-full">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+                          <Home className="w-5 h-5 text-primary" />
+                          一起生活
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {partner.livingTogether.morningScene && (
+                          <div className="space-y-2">
+                            <h3 className="text-sm md:text-base font-semibold text-primary">早晨</h3>
+                            <p className="text-foreground/90 leading-relaxed text-sm">
+                              {partner.livingTogether.morningScene}
+                            </p>
+                          </div>
+                        )}
+                        {partner.livingTogether.weekendScene && (
+                          <div className="space-y-2 pt-2 border-t border-border/30">
+                            <h3 className="text-sm md:text-base font-semibold text-accent">周末</h3>
+                            <p className="text-foreground/90 leading-relaxed text-sm">
+                              {partner.livingTogether.weekendScene}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
+                {/* 第七行：更多细节 - 占满整行 */}
+                {partner.deeperTraits && (
+                  <motion.div variants={fadeInUp} className="lg:col-span-12">
+                    <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+                          <Heart className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                          TA 的更多细节
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                          {partner.deeperTraits.hiddenTalents && partner.deeperTraits.hiddenTalents.length > 0 && (
+                            <div className="space-y-2">
+                              <h3 className="text-base font-semibold text-primary">隐藏才能</h3>
+                              <ul className="list-none space-y-1.5 text-foreground/90">
+                                {partner.deeperTraits.hiddenTalents.slice(0, 3).map((talent, index) => (
+                                  <li key={index} className="flex items-start gap-2 text-sm">
+                                    <span className="text-primary mt-1">•</span>
+                                    <span className="flex-1">{talent}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {partner.deeperTraits.quirks && partner.deeperTraits.quirks.length > 0 && (
+                            <div className="space-y-2">
+                              <h3 className="text-base font-semibold text-secondary">小习惯</h3>
+                              <ul className="list-none space-y-1.5 text-foreground/90">
+                                {partner.deeperTraits.quirks.slice(0, 3).map((quirk, index) => (
+                                  <li key={index} className="flex items-start gap-2 text-sm">
+                                    <span className="text-secondary mt-1">•</span>
+                                    <span className="flex-1">{quirk}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {partner.deeperTraits.petPeeves && partner.deeperTraits.petPeeves.length > 0 && (
+                            <div className="space-y-2">
+                              <h3 className="text-base font-semibold text-accent">小介意</h3>
+                              <ul className="list-none space-y-1.5 text-foreground/90">
+                                {partner.deeperTraits.petPeeves.slice(0, 3).map((peeve, index) => (
+                                  <li key={index} className="flex items-start gap-2 text-sm">
+                                    <span className="text-accent mt-1">•</span>
+                                    <span className="flex-1">{peeve}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {partner.deeperTraits.randomFacts && partner.deeperTraits.randomFacts.length > 0 && (
+                            <div className="space-y-2">
+                              <h3 className="text-base font-semibold text-primary">随机事实</h3>
+                              <ul className="list-none space-y-1.5 text-foreground/90">
+                                {partner.deeperTraits.randomFacts.slice(0, 3).map((fact, index) => (
+                                  <li key={index} className="flex items-start gap-2 text-sm">
+                                    <span className="text-primary mt-1">•</span>
+                                    <span className="flex-1">{fact}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* 底部分享按钮 */}
           <motion.section
             variants={fadeInUp}
-            className="flex flex-col sm:flex-row gap-4 justify-center pt-8"
+            className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
           >
             {hasAnyImages ? (
               <Button size="lg" onClick={handleShare} className="gap-2">
