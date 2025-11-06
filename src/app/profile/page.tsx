@@ -169,6 +169,18 @@ export default function ProfilePage() {
     setSceneDialogOpen(true);
   };
 
+  const handleGenerateFirstImage = async () => {
+    try {
+      setGenerationError(null);
+      // 直接生成第一张图片，不需要用户输入场景描述
+      await generateImages(1, "9:16");
+    } catch (error) {
+      console.error("Generate first image failed:", error);
+      setGenerationError("生成失败，请稍后重试");
+      alert("生成失败，请稍后重试");
+    }
+  };
+
   const handleConfirmGenerateScene = async () => {
     try {
       const userInput = customSceneInput.trim() || undefined;
@@ -302,16 +314,19 @@ export default function ProfilePage() {
                   人格档案已经准备好，点击下方按钮生成 Echo 的首张形象。生成后即可继续解锁更多场景与装扮。
                 </p>
               </div>
-              <div className="flex justify-center">
+              <div className="flex flex-col items-center gap-4">
                 <Button
                   size="lg"
-                  onClick={handleGenerateNewScene}
+                  onClick={handleGenerateFirstImage}
                   className="gap-2"
                   disabled={isGeneratingImages}
                 >
                   <Wand2 className="w-4 h-4" />
                   {isGeneratingImages ? "生成中..." : "生成首张形象"}
                 </Button>
+                {generationError && (
+                  <p className="text-sm text-destructive">{generationError}</p>
+                )}
               </div>
             </motion.section>
           )}
@@ -343,7 +358,7 @@ export default function ProfilePage() {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={handleGenerateNewScene}
+                onClick={handleGenerateFirstImage}
                 className="gap-2"
                 disabled={isGeneratingImages}
               >
