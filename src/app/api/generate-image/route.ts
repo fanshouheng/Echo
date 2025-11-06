@@ -102,11 +102,12 @@ export async function POST(request: NextRequest) {
       // 后续场景，基于首次提示词修改（但这里只是生成一个基础提示词，实际循环中会生成不同的场景）
       console.log("🎯 后续场景生成：基于首次提示词修改...");
       // 对于多张图片，会在循环中为每张生成不同的场景，这里先生成一个基础提示词
-      imagePrompt = generateSceneVariationPrompt(
+      imagePrompt = await generateSceneVariationPrompt(
         firstImagePrompt,
         sceneDescription,
         userInput,
-        0 // 基础场景索引
+        0, // 基础场景索引
+        partnerData // 传递人格档案数据
       );
       console.log("📝 基础提示词:", imagePrompt);
     } else {
@@ -143,17 +144,20 @@ export async function POST(request: NextRequest) {
           }
         } else if (isFirstGeneration && i > 0 && savedFirstPrompt) {
           // 首次生成的多张图片，基于第一张的提示词生成不同场景
-          scenePrompt = generateSceneVariationPrompt(savedFirstPrompt, undefined, undefined, i);
+          scenePrompt = await generateSceneVariationPrompt(savedFirstPrompt, undefined, undefined, i, partnerData);
         } else if (isFirstGeneration && i > 0) {
           // 如果没有保存的提示词，基于当前 imagePrompt 生成变化
-          scenePrompt = generateSceneVariationPrompt(imagePrompt, undefined, undefined, i);
+          scenePrompt = await generateSceneVariationPrompt(imagePrompt, undefined, undefined, i, partnerData);
         } else if (firstImagePrompt) {
           // 后续生成，基于首次提示词生成不同场景
-          scenePrompt = generateSceneVariationPrompt(
+          // 使用已生成的图片数量作为场景索引，确保每次生成不同的场景
+          const baseIndex = images.length;
+          scenePrompt = await generateSceneVariationPrompt(
             firstImagePrompt,
             sceneDescription,
             userInput,
-            images.length + i // 使用已生成的图片数量作为场景索引
+            baseIndex + i, // 递增索引，确保每次生成不同的场景
+            partnerData // 传递人格档案数据
           );
         } else {
           // Fallback：使用原始提示词
