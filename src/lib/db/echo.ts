@@ -6,6 +6,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { PartnerPersonalityProfile } from "@/types/partner-personality";
 import { PersonalityProfile } from "@/types/personality";
+import { randomBytes } from "crypto";
 
 /**
  * 创建新的 Echo 档案
@@ -28,16 +29,21 @@ export async function createEcho(
   }
 ) {
   // 检查用户是否已经有 Echo（可选：限制每个用户只能有一个 Echo）
-  // const existingEcho = await prisma.echo.findFirst({
+  // const existingEcho = await prisma.echos.findFirst({
   //   where: { userId },
   // });
   // if (existingEcho) {
   //   throw new Error("您已经有一个 Echo 档案了");
   // }
 
+  // 生成唯一 ID 和分享令牌
+  const id = `${Date.now().toString(36)}${randomBytes(9).toString("hex")}`;
+  const shareToken = `${Date.now().toString(36)}${randomBytes(12).toString("hex")}`;
+
   // 创建 Echo
-  const echo = await prisma.echo.create({
+  const echo = await prisma.echos.create({
     data: {
+      id,
       userId,
       name: data.name,
       nickname: data.nickname,
@@ -51,10 +57,12 @@ export async function createEcho(
       generationTime: data.generationTime,
       usedModel: data.usedModel,
       firstImagePrompt: data.firstImagePrompt,
+      shareToken,
+      updatedAt: new Date(),
       isPublic: false, // 默认不公开
     },
     include: {
-      images: {
+      echo_images: {
         orderBy: { index: "asc" },
       },
     },
@@ -67,10 +75,10 @@ export async function createEcho(
  * 获取用户的 Echo 列表
  */
 export async function getUserEchos(userId: string) {
-  const echos = await prisma.echo.findMany({
+  const echos = await prisma.echos.findMany({
     where: { userId },
     include: {
-      images: {
+      echo_images: {
         orderBy: { index: "asc" },
       },
     },
@@ -84,13 +92,13 @@ export async function getUserEchos(userId: string) {
  * 根据 ID 获取 Echo（仅限所有者）
  */
 export async function getEchoById(echoId: string, userId: string) {
-  const echo = await prisma.echo.findFirst({
+  const echo = await prisma.echos.findFirst({
     where: {
       id: echoId,
       userId, // 确保只能访问自己的 Echo
     },
     include: {
-      images: {
+      echo_images: {
         orderBy: { index: "asc" },
       },
     },
@@ -103,13 +111,13 @@ export async function getEchoById(echoId: string, userId: string) {
  * 根据分享令牌获取 Echo（公开访问）
  */
 export async function getEchoByShareToken(shareToken: string) {
-  const echo = await prisma.echo.findFirst({
+  const echo = await prisma.echos.findFirst({
     where: {
       shareToken,
       isPublic: true, // 只返回公开的 Echo
     },
     include: {
-      images: {
+      echo_images: {
         orderBy: { index: "asc" },
       },
     },
@@ -133,7 +141,7 @@ export async function addEchoImage(
   }
 ) {
   // 验证 Echo 所有权
-  const echo = await prisma.echo.findFirst({
+  const echo = await prisma.echos.findFirst({
     where: {
       id: echoId,
       userId,
@@ -144,8 +152,10 @@ export async function addEchoImage(
     throw new Error("Echo 不存在或无权访问");
   }
 
-  const image = await prisma.echoImage.create({
+  const imageId = `${Date.now().toString(36)}${randomBytes(9).toString("hex")}`;
+  const image = await prisma.echo_images.create({
     data: {
+      id: imageId,
       echoId,
       url: data.url,
       prompt: data.prompt,
@@ -173,7 +183,7 @@ export async function addEchoImages(
   }>
 ) {
   // 验证 Echo 所有权
-  const echo = await prisma.echo.findFirst({
+  const echo = await prisma.echos.findFirst({
     where: {
       id: echoId,
       userId,
@@ -184,8 +194,9 @@ export async function addEchoImages(
     throw new Error("Echo 不存在或无权访问");
   }
 
-  const createdImages = await prisma.echoImage.createMany({
+  const createdImages = await prisma.echo_images.createMany({
     data: images.map((img) => ({
+      id: `${Date.now().toString(36)}${randomBytes(9).toString("hex")}`,
       echoId,
       url: img.url,
       prompt: img.prompt,
@@ -206,7 +217,7 @@ export async function updateEchoVisibility(
   userId: string,
   isPublic: boolean
 ) {
-  const echo = await prisma.echo.updateMany({
+  const echo = await prisma.echos.updateMany({
     where: {
       id: echoId,
       userId, // 确保只能更新自己的 Echo
@@ -223,7 +234,7 @@ export async function updateEchoVisibility(
  * 删除 Echo（级联删除所有关联数据）
  */
 export async function deleteEcho(echoId: string, userId: string) {
-  const echo = await prisma.echo.deleteMany({
+  const echo = await prisma.echos.deleteMany({
     where: {
       id: echoId,
       userId, // 确保只能删除自己的 Echo
@@ -244,8 +255,10 @@ export async function saveInterviewAnswers(
     echoId?: string;
   }
 ) {
-  const interview = await prisma.interviewAnswer.create({
+  const interviewId = `${Date.now().toString(36)}${randomBytes(9).toString("hex")}`;
+  const interview = await prisma.interview_answers.create({
     data: {
+      id: interviewId,
       userId,
       answers: data.answers as any,
       preferredGender: data.preferredGender,

@@ -198,7 +198,7 @@ export const useGenerationStore = create<GenerationState>()(
               name: state.partner.name,
               nickname: state.partner.nickname,
               tagline: state.partner.tagline,
-              keywords: state.partner.keywords || [],
+              keywords: state.partner.corePersonality?.primaryTraits || [],
               gender: state.partner.gender || "female",
               age: parseInt(state.partner.age) || 25,
               vibe: state.partner.vibe,

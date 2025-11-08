@@ -3,9 +3,11 @@
  * 用户认证配置
  */
 
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
+import type { NextAuthConfig } from "next-auth";
 
 // 动态导入 GitHub 和 Google providers（如果配置了）
 let GitHubProvider: any = null;
@@ -23,7 +25,7 @@ try {
   }
 } catch {}
 
-export const authOptions = {
+export const authOptions: NextAuthConfig = {
   // 注意：使用 CredentialsProvider + JWT 策略时不需要 adapter
   // 只有在使用 OAuth providers（GitHub/Google）时才需要 adapter
   // adapter: PrismaAdapter(prisma) as any,
@@ -115,3 +117,6 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
 };
+
+// 导出 auth 函数供 API routes 使用
+export const { auth, handlers } = NextAuth(authOptions);
