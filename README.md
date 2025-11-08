@@ -22,6 +22,8 @@
 - **🎨 完整档案** - 生成包含文字描述和视觉形象的数字人格作品
 - **🔒 唯一性** - 每个 Echo 档案都是独特的，生成后不可重置，确保其独特性
 - **🖼️ 智能场景生成** - 基于人格档案自动生成多样化场景（商场、书店、电影院、游戏厅、网吧、地铁站等），支持自定义场景描述
+- **💾 数据持久化** - 所有 Echo 档案和图片自动保存到数据库，支持跨设备同步
+- **👤 用户系统** - 完整的登录注册功能，保护用户隐私和数据安全
 
 ---
 
@@ -130,6 +132,7 @@ Echo 的描述风格**文艺与生活并存**，避免空洞的诗意，专注�
 
 - Node.js 20.x 或更高版本
 - npm 或 pnpm
+- PostgreSQL 数据库（推荐使用 Supabase）
 
 ### 安装步骤
 
@@ -143,7 +146,50 @@ npm install
 
 # 配置环境变量
 cp .env.local.example .env.local
-# 编辑 .env.local 添加你的 API keys
+# 编辑 .env.local 添加你的配置（见下方说明）
+```
+
+### 环境变量配置
+
+创建 `.env.local` 文件，包含以下配置：
+
+```env
+# 数据库连接（Supabase PostgreSQL）
+DATABASE_URL="postgresql://user:password@host:port/database"
+
+# NextAuth.js 配置
+NEXTAUTH_SECRET="your-secret-key-here"  # 运行: openssl rand -base64 32
+NEXTAUTH_URL="http://localhost:3000"    # 开发环境
+
+# 邮件服务（用于邮箱登录）
+EMAIL_SERVER_HOST="smtp.example.com"
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER="your-email@example.com"
+EMAIL_SERVER_PASSWORD="your-password"
+EMAIL_FROM="noreply@example.com"
+
+# OAuth 提供商（可选）
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# AI API Keys
+DEEPSEEK_API_KEY="your-deepseek-api-key"
+DOUBAO_API_KEY="your-doubao-api-key"
+```
+
+### 数据库设置
+
+```bash
+# 1. 运行数据库迁移
+npx prisma migrate dev
+
+# 2. 生成 Prisma Client
+npx prisma generate
+
+# 3. （可选）打开 Prisma Studio 查看数据库
+npx tsx scripts/start-prisma-studio.ts
 ```
 
 ### 运行项目
@@ -157,16 +203,37 @@ npm run build
 npm start
 ```
 
+### 数据库管理
+
+```bash
+# 查看数据库（可视化工具）
+npx tsx scripts/start-prisma-studio.ts
+# 或手动设置环境变量后运行: npx prisma studio
+
+# 重置数据库（开发环境）
+npx prisma migrate reset
+
+# 查看数据库状态
+npx prisma migrate status
+```
+
 ### 部署
 
 项目可一键部署到 [Vercel](https://vercel.com) 或 [Netlify](https://netlify.com)，支持零配置部署。
+
+**部署前准备：**
+1. 确保数据库已配置并迁移完成
+2. 在部署平台设置所有环境变量
+3. 确保 `NEXTAUTH_URL` 设置为生产环境域名
 
 ---
 
 ## 🛠️ 技术栈
 
-- **前端框架:** Next.js 14
+- **前端框架:** Next.js 14 (App Router)
 - **开发语言:** TypeScript
+- **数据库:** PostgreSQL (Supabase) + Prisma ORM
+- **认证系统:** NextAuth.js (支持邮箱、GitHub、Google 登录)
 - **AI 能力:** DeepSeek (人格生成) + 豆包 AI (图像生成)
 - **状态管理:** Zustand
 - **样式方案:** Tailwind CSS + shadcn/ui

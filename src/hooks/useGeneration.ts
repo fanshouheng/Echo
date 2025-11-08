@@ -32,7 +32,7 @@ export function useGeneratePersonality() {
   const [error, setError] = useState<string | null>(null);
 
   const { answers } = useInterviewStore();
-  const { setPersonality, setStatus, setError: setStoreError, preferredGender } = useGenerationStore();
+  const { setPersonality, setStatus, setError: setStoreError, preferredGender, saveToDatabase } = useGenerationStore();
 
   const generate = useCallback(async () => {
     console.log("📝 useGeneratePersonality: Starting generation...");
@@ -94,6 +94,19 @@ export function useGeneratePersonality() {
         const { setPartner } = useGenerationStore.getState();
         setPartner(partner);
         console.log("✅ Full partner data stored in Zustand");
+        
+        // 自动保存到数据库（如果用户已登录）
+        try {
+          const echoId = await saveToDatabase();
+          if (echoId) {
+            console.log("✅ Echo automatically saved to database:", echoId);
+          } else {
+            console.log("ℹ️ Echo not saved to database (user not logged in or save failed)");
+          }
+        } catch (error) {
+          console.error("⚠️ Auto-save to database failed:", error);
+          // 不抛出错误，允许用户继续使用
+        }
       }
       
       console.log("✅ Personality stored in Zustand");
@@ -148,6 +161,8 @@ export function useGenerateImages() {
     firstImagePrompt,
     setFirstImagePrompt,
     images: currentImages,
+    syncImagesToDatabase,
+    echoId,
   } = useGenerationStore();
 
   const generate = useCallback(
@@ -259,6 +274,17 @@ export function useGenerateImages() {
           setImages(images, usedModel);
         }
         
+        // 同步图片到数据库（如果 Echo 已保存到数据库）
+        if (echoId) {
+          try {
+            await syncImagesToDatabase();
+            console.log("✅ Images synced to database");
+          } catch (error) {
+            console.error("⚠️ Sync images to database failed:", error);
+            // 不抛出错误，允许用户继续使用
+          }
+        }
+        
         return images;
       } catch (err) {
         const errorMessage = axios.isAxiosError(err)
@@ -272,7 +298,7 @@ export function useGenerateImages() {
         setIsLoading(false);
       }
     },
-    [storePersonality, storePartner, setImages, appendImages, setStatus, setStoreError, preferredGender, firstImagePrompt, currentImages, setFirstImagePrompt]
+    [storePersonality, storePartner, setImages, appendImages, setStatus, setStoreError, preferredGender, firstImagePrompt, currentImages, setFirstImagePrompt, syncImagesToDatabase, echoId]
   );
 
   return { generate, isLoading, error };

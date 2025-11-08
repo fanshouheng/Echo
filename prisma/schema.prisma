@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model echo_images {
+  id          String   @id
+  echoId      String
+  createdAt   DateTime @default(now())
+  url         String
+  prompt      String?
+  aspectRatio String?
+  model       String?
+  index       Int      @default(0)
+  echos       echos    @relation(fields: [echoId], references: [id], onDelete: Cascade)
+
+  @@index([echoId, index])
+}
+
+model echos {
+  id                String              @id
+  userId            String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  name              String
+  nickname          String
+  tagline           String
+  keywords          String[]
+  gender            String
+  age               Int
+  vibe              String
+  personalityData   Json
+  partnerData       Json?
+  generationTime    Int?
+  usedModel         String?
+  firstImagePrompt  String?
+  shareToken        String              @unique
+  isPublic          Boolean             @default(false)
+  echo_images       echo_images[]
+  users             users               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interview_answers interview_answers[]
+
+  @@index([userId, createdAt])
+}
+
+model interview_answers {
+  id              String   @id
+  userId          String
+  echoId          String?
+  createdAt       DateTime @default(now())
+  answers         Json
+  preferredGender String?
+  echos           echos?   @relation(fields: [echoId], references: [id])
+  users           users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([echoId])
+  @@index([userId])
+}
+
+model sessions {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id                String              @id
+  email             String              @unique
+  name              String?
+  password          String?             // 密码（加密存储）
+  emailVerified     DateTime?
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  accounts          accounts[]
+  echos             echos[]
+  interview_answers interview_answers[]
+  sessions          sessions[]
+}
+
+model verification_tokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}

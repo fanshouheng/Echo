@@ -45,6 +45,12 @@ interface GenerationState {
 
   setPreferredGender: (gender: "male" | "female") => void;
 
+  // Database sync
+  echoId: string | null; // 数据库中的 Echo ID
+  saveToDatabase: () => Promise<string | null>; // 保存到数据库，返回 Echo ID
+  loadFromDatabase: (echoId: string) => Promise<void>; // 从数据库加载
+  syncImagesToDatabase: () => Promise<void>; // 同步图片到数据库
+
   // Computed
   isGenerating: () => boolean;
   hasPersonality: () => boolean;
@@ -64,6 +70,7 @@ const initialState = {
   imagesGeneratedAt: null,
   usedModel: null,
   firstImagePrompt: null,
+  echoId: null, // 数据库中的 Echo ID
 };
 
 export const useGenerationStore = create<GenerationState>()(
@@ -171,6 +178,139 @@ export const useGenerationStore = create<GenerationState>()(
       // Set first image prompt
       setFirstImagePrompt: (prompt: string) => {
         set({ firstImagePrompt: prompt });
+      },
+
+      // Save to database
+      saveToDatabase: async () => {
+        const state = get();
+        if (!state.partner) {
+          console.error("❌ Cannot save: No partner data");
+          return null;
+        }
+
+        try {
+          const response = await fetch("/api/echo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: state.partner.name,
+              nickname: state.partner.nickname,
+              tagline: state.partner.tagline,
+              keywords: state.partner.keywords || [],
+              gender: state.partner.gender || "female",
+              age: parseInt(state.partner.age) || 25,
+              vibe: state.partner.vibe,
+              personalityData: state.personality,
+              partnerData: state.partner,
+              generationTime: state.personalityGeneratedAt
+                ? Date.now() - state.personalityGeneratedAt
+                : undefined,
+              usedModel: state.usedModel,
+              firstImagePrompt: state.firstImagePrompt,
+            }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "保存失败");
+          }
+
+          const data = await response.json();
+          const echoId = data.echo?.id;
+
+          if (echoId) {
+            set({ echoId });
+            console.log("✅ Echo saved to database:", echoId);
+
+            // 如果有图片，同步图片到数据库
+            if (state.images.length > 0) {
+              await get().syncImagesToDatabase();
+            }
+          }
+
+          return echoId;
+        } catch (error) {
+          console.error("❌ Save to database error:", error);
+          set({ error: error instanceof Error ? error.message : "保存失败" });
+          return null;
+        }
+      },
+
+      // Load from database
+      loadFromDatabase: async (echoId: string) => {
+        try {
+          const response = await fetch(`/api/echo?id=${echoId}`);
+
+          if (!response.ok) {
+            throw new Error("加载失败");
+          }
+
+          const data = await response.json();
+          const echo = data.echo;
+
+          if (!echo) {
+            throw new Error("Echo 不存在");
+          }
+
+          // 恢复状态
+          set({
+            echoId: echo.id,
+            personality: echo.personalityData as PersonalityProfile,
+            partner: echo.partnerData as PartnerPersonalityProfile,
+            images: echo.images?.map((img: any) => img.url) || [],
+            selectedImageIndex: 0,
+            firstImagePrompt: echo.firstImagePrompt || null,
+            usedModel: echo.usedModel as ImageModel | null,
+            personalityGeneratedAt: echo.createdAt
+              ? new Date(echo.createdAt).getTime()
+              : null,
+            status: "completed",
+            error: null,
+          });
+
+          console.log("✅ Echo loaded from database:", echoId);
+        } catch (error) {
+          console.error("❌ Load from database error:", error);
+          set({ error: error instanceof Error ? error.message : "加载失败" });
+        }
+      },
+
+      // Sync images to database
+      syncImagesToDatabase: async () => {
+        const state = get();
+        if (!state.echoId || state.images.length === 0) {
+          return;
+        }
+
+        try {
+          const images = state.images.map((url, index) => ({
+            url,
+            index,
+            aspectRatio: "9:16", // 默认值，可以从状态中获取
+            model: state.usedModel || undefined,
+          }));
+
+          const response = await fetch("/api/echo/images", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              echoId: state.echoId,
+              images,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("同步图片失败");
+          }
+
+          console.log("✅ Images synced to database");
+        } catch (error) {
+          console.error("❌ Sync images error:", error);
+        }
       },
     }),
     {

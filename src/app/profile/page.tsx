@@ -226,25 +226,25 @@ export default function ProfilePage() {
             <div className="lg:col-span-5 space-y-4 md:space-y-6 flex flex-col justify-center">
               <div className="space-y-3 md:space-y-4">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  {personality.name}
-                </h2>
+              {personality.name}
+            </h2>
                 <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed">
                   {personality.tagline}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 md:gap-3 pt-2">
-                {personality.keywords.map((keyword, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
+              {personality.keywords.map((keyword, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
                     className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-primary/20 text-primary text-sm md:text-base font-medium"
-                  >
-                    {keyword}
-                  </motion.span>
-                ))}
-              </div>
+                >
+                  {keyword}
+                </motion.span>
+              ))}
+            </div>
             </div>
 
             {/* 右侧：图片区域 */}
@@ -339,7 +339,7 @@ export default function ProfilePage() {
                 >
                   <Wand2 className="w-4 h-4" />
                   {isGeneratingImages ? "生成中..." : "生成首张形象"}
-                </Button>
+              </Button>
                 {generationError && (
                   <p className="text-sm text-destructive">{generationError}</p>
                 )}
@@ -492,8 +492,8 @@ export default function ProfilePage() {
                         )}
                       </CardContent>
                     </Card>
-                  </motion.div>
-                )}
+            </motion.div>
+          )}
 
                 {partner.livingTogether && (
                   <motion.div variants={fadeInUp} className="lg:col-span-6">
@@ -605,10 +605,10 @@ export default function ProfilePage() {
             className="flex flex-col sm:flex-row gap-4 justify-center pt-6"
           >
             {hasAnyImages ? (
-              <Button size="lg" onClick={handleShare} className="gap-2">
-                <Share2 className="w-4 h-4" />
-                分享我的 Echo
-              </Button>
+            <Button size="lg" onClick={handleShare} className="gap-2">
+              <Share2 className="w-4 h-4" />
+              分享我的 Echo
+            </Button>
             ) : (
               <Button
                 size="lg"
@@ -619,7 +619,7 @@ export default function ProfilePage() {
               >
                 <Wand2 className="w-4 h-4" />
                 {isGeneratingImages ? "生成中..." : "先生成首张形象"}
-              </Button>
+            </Button>
             )}
           </motion.section>
         </motion.div>
