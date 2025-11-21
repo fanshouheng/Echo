@@ -16,7 +16,7 @@ export function professionalToLegacy(
     name: professional.name,
     tagline: professional.tagline,
     keywords: professional.personality.coreTraits,
-    communicationStyle: professional.togetherScenes.dailyChat,
+    communicationStyle: `${professional.communication.speaking.volume}，${professional.communication.speaking.pace}，${professional.communication.conflictStyle}`,
     values: professional.whyMatch.valueMatch,
     whyMatch: `${professional.whyMatch.lifestyleMatch} ${professional.whyMatch.emotionalMatch}`,
     uniqueTraits: `${professional.uniqueDetails.catchphrase}。${professional.uniqueDetails.quirkyHabit}`,

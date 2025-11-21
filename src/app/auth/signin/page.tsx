@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, Github } from "lucide-react";
+import { Mail, Lock, Github, Info } from "lucide-react";
 import Link from "next/link";
 
 export default function SignInPage() {
@@ -111,6 +111,40 @@ export default function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* 参赛阶段提示 */}
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-3">
+            <div className="flex items-start gap-2">
+              <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <p className="text-sm font-medium text-primary">
+                  参赛阶段提示
+                </p>
+                <p className="text-sm text-foreground/80">
+                  暂无需登录即可使用所有功能。你可以直接开始创建你的 Echo 档案！
+                </p>
+              </div>
+            </div>
+            <Link href="/" className="block">
+              <Button
+                variant="outline"
+                className="w-full border-primary/30 text-primary hover:bg-primary/10"
+              >
+                跳过登录，直接开始
+              </Button>
+            </Link>
+          </div>
+
+          {/* 分隔线 */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                或登录以保存数据
+              </span>
+            </div>
+          </div>
           {/* 登录/注册表单 */}
           <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
             {!isLogin && (

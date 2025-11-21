@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       ],
       {
         model: modelName,
-        temperature: 0.8, // Higher temperature for more creativity
+        temperature: 1.2, // Increased temperature for more creativity and diversity
         maxRetries: 3,
         enableThinking: true, // 开启思考模式
       }
