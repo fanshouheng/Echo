@@ -7,39 +7,10 @@
   NODE_VERSION = "20"
   NPM_FLAGS = "--production=false"
 
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
-
-[build.processing.images]
-  compress = true
-
 # Redirect rules for Next.js App Router
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
-
-# API routes
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-# Handle authentication callbacks
-[[redirects]]
-  from = "/api/auth/*"
-  to = "/.netlify/functions/auth/:splat"
   status = 200
 
 # Custom headers for security and performance
@@ -78,21 +49,3 @@
 # Functions configuration
 [functions]
   node_bundler = "esbuild"
-  included_files = ["node_modules/@prisma/client/**/*"]
-
-# Prisma schema setup
-[[plugins]]
-  package = "@netlify/plugin-prisma"
-
-# Environment variables validation
-[context.production.environment]
-  NEXTAUTH_URL = { required = true }
-  DATABASE_URL = { required = true }
-  NEXTAUTH_SECRET = { required = true }
-  DEEPSEEK_API_KEY = { required = true }
-  DOUBAO_API_KEY = { required = true }
-  EMAIL_SERVER_HOST = { required = true }
-  EMAIL_SERVER_PORT = { required = true }
-  EMAIL_SERVER_USER = { required = true }
-  EMAIL_SERVER_PASSWORD = { required = true }
-  EMAIL_FROM = { required = true }

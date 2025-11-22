@@ -136,11 +136,15 @@ fi
 # 7. 部署配置检查
 echo -e "${YELLOW}⚙️ 7. 部署配置检查${NC}"
 
-# 检查 netlify.toml 配置
-if grep -q "NODE_VERSION.*20" netlify.toml; then
-    echo "✅ Node.js 版本配置正确"
+# 验证 netlify.toml 语法
+echo "🔍 验证 netlify.toml 语法..."
+if python -c "import tomllib; tomllib.load(open('netlify.toml', 'rb'))" 2>/dev/null; then
+    echo "✅ netlify.toml 语法验证通过"
 else
-    echo -e "${RED}❌ Node.js 版本配置不正确${NC}"
+    echo -e "${RED}❌ netlify.toml 语法错误${NC}"
+    echo "💡 使用 Python 验证 TOML 语法:"
+    echo "   python -c \"import tomllib; tomllib.load(open('netlify.toml', 'rb'))\""
+    exit 1
 fi
 
 if grep -q "npm run build" netlify.toml; then
