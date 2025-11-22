@@ -1,5 +1,5 @@
 // Netlify Function to proxy Next.js API routes
-import { GET, POST } from '../../src/app/api/generate-image/route';
+import { POST } from '../../src/app/api/generate-image/route';
 
 export const handler = async (event, context) => {
   // Add required headers for CORS
@@ -20,13 +20,19 @@ export const handler = async (event, context) => {
   }
 
   try {
+    // Create a mock request object for Next.js App Router
+    const url = new URL(event.path, `https://${event.headers.host || 'localhost'}`);
+    const request = new Request(url.toString(), {
+      method: event.httpMethod,
+      headers: new Headers(event.headers),
+      body: event.body ? Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8') : null,
+    });
+
     // Call the original Next.js API handler
     let result;
 
-    if (event.httpMethod === 'GET') {
-      result = await GET(event);
-    } else if (event.httpMethod === 'POST') {
-      result = await POST(event);
+    if (event.httpMethod === 'POST') {
+      result = await POST(request);
     } else {
       return {
         statusCode: 405,
