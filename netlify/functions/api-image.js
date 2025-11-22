@@ -1,5 +1,5 @@
 // Netlify Function to proxy Next.js API routes
-import { handler as imageHandler } from '../src/pages/api/image';
+import { GET, POST } from '../../src/app/api/generate-image/route';
 
 export const handler = async (event, context) => {
   // Add required headers for CORS
@@ -21,16 +21,27 @@ export const handler = async (event, context) => {
 
   try {
     // Call the original Next.js API handler
-    const result = await imageHandler(event, context);
+    let result;
+
+    if (event.httpMethod === 'GET') {
+      result = await GET(event);
+    } else if (event.httpMethod === 'POST') {
+      result = await POST(event);
+    } else {
+      return {
+        statusCode: 405,
+        headers,
+        body: JSON.stringify({ error: 'Method Not Allowed' }),
+      };
+    }
 
     return {
-      statusCode: result.statusCode || 200,
+      statusCode: result.status || 200,
       headers: {
         ...headers,
-        ...result.headers,
+        ...Object.fromEntries(result.headers || []),
       },
-      body: result.body,
-      isBase64Encoded: result.isBase64Encoded || false,
+      body: result.body ? await result.body.text() : '',
     };
   } catch (error) {
     console.error('Netlify Function Error:', error);
